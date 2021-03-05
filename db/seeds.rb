@@ -33,3 +33,5 @@ user = User.create(
   email: 'erick2109@gmail.com',
   role: 1
 )
+
+setup = LotterySetup.create(mmt: 10000, mpj:10000, jpt: 500, mt: 1000)

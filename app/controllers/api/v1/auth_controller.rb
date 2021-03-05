@@ -14,12 +14,14 @@ class Api::V1::AuthController < ApplicationController
   def auto_login
     render json: {
       player: current_player,
-      producst: get_products()
+      producst: products,
+      lottery_setup: lottery_setup,
+      saldo_actual: 500000
     }
   end
   
   private
-  def get_products
+  def products
     [
       {
         "id":5,
@@ -40,6 +42,10 @@ class Api::V1::AuthController < ApplicationController
         ]
       }
     ]
+  end
+
+  def lottery_setup
+    LotterySetup.select(:mmt,:mpj,:jpt,:mt).last
   end
 
   def check_if_player_exist

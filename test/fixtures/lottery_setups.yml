@@ -1,0 +1,24 @@
+# == Schema Information
+#
+# Table name: lottery_setups
+#
+#  id         :bigint           not null, primary key
+#  mmt        :float
+#  mpj        :float
+#  jpt        :float
+#  mt         :float
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#
+
+one:
+  mmt: 1.5
+  mpj: 1.5
+  jpt: 1.5
+  mt: 1.5
+
+two:
+  mmt: 1.5
+  mpj: 1.5
+  jpt: 1.5
+  mt: 1.5

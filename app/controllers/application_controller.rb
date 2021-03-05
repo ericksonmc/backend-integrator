@@ -6,19 +6,26 @@ class ApplicationController < ActionController::API
     logged_in_user
   end
 
+  def current_integrator
+    Integrator.find(logged_in_user.integrator_id)
+  end
+
   def encode_token(payload)
     JWT.encode(payload, 's3cr3t')
   end
 
   def auth_header
     # { Authorization: 'Bearer <token>' }
-    # request.headers['Authorization']
-    params[:token]
+    token = request.headers['Authorization'].present? ? request.headers['Authorization'] : params[:token]
   end
 
   def decoded_token
     if auth_header
-      token = auth_header
+      if auth_header.include? "Bearer"
+        token = auth_header.split(" ")[1]
+      else
+        token = auth_header
+      end
       # header: { 'Authorization': 'Bearer <token>' }
       begin
         JWT.decode(token, 's3cr3t', true, algorithm: 'HS256')

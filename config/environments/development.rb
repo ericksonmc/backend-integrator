@@ -1,5 +1,8 @@
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
+  ActiveSupport::Reloader.to_prepare do
+    Dir["#{Rails.root}/app/services/*/.rb"].each { |file| require_dependency file }
+  end
 
   # In the development environment your application's code is reloaded on
   # every request. This slows down response time but is perfect for development
