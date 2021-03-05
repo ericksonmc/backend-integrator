@@ -6,7 +6,6 @@ class Api::V1::SalesController < ApplicationController
     if player_has_balance
       ticket = sale_ticket(sales_params.to_h)
       render json: ticket
-      # render json: ticket[:data]
     else
       render json: {message: "Saldo insuficiente"}, status: 400 and return
     end
