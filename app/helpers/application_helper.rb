@@ -3,7 +3,7 @@ module ApplicationHelper
     if Rails.env == "development"
       "http://localhost:4016"
     elsif Rails.env == "production"
-      "http://34.227.3.72:4016"
+      "http://138.197.97.45:4016"
     end
   end
 end
