@@ -40,7 +40,7 @@ class Api::V1::AuthController < ApplicationController
       },
       {
         "id": 9,
-        "nombre": "TripleZamorano",
+        "nombre": "Zamorano",
         "sorteos": [
           {"id": 76, "nombre": "ZamoTzo4", "nombre_largo": "Zamorano Tripletazo 04:00PM", "horac_ls": "13:55", "horac_d": ""},
           {"id": 81, "nombre": "ZamoTzo7", "nombre_largo": "Zamorano Tripletazo 07:00PM", "horac_ls": "18:55", "horac_d": "18:55"},
