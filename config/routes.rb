@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :auth, only: [:create] do
-        # post :auto_login, on: :collection
+        post :auto_login, on: :collection
         get :auto_login, on: :collection
       end
       resources :sales, only: [:create]
