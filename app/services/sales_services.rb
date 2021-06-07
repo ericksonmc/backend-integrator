@@ -17,7 +17,6 @@ class SalesServices
 
   def validate_plays
     @options.merge!({ body: @plays.to_json })
-    byebug
     response = HTTParty.post('http://api-dev.caribeapuesta.com/tickets/validar',
       @options
     )
@@ -27,7 +26,6 @@ class SalesServices
 
   def add_plays
     @options.merge!({ body: @plays.to_json })
-    byebug
     response = HTTParty.post('http://api-dev.caribeapuesta.com/tickets/add',
       @options
     )

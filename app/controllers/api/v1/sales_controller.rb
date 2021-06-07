@@ -51,7 +51,6 @@ class Api::V1::SalesController < ApplicationController
       security: 2021050220111514,
       bets: JSON.parse(sales_params.to_json)
     }
-    byebug
     @add_plays ||= SalesServices.new(current_player, data).add_plays
   end
 
