@@ -1,28 +1,35 @@
 class SalesServices
   include ApplicationHelper
+  require 'redis'
   require 'httparty'
 
-  def initialize
+  def initialize(player, plays)
+    @player = player
+    @plays = plays
     @options = {
       headers: {
         "Content-Type" => 'application/json',
-        "tokenSPJ" => "6a236abc8aaa8f2ee6964204af0d323748e6320998203146ee97cc1eda30ba3c"
+        "Type" => "web",
+        "Authorization" => "Bearer #{auth_token}"
       }
     }
   end
 
-  def send_plays(params)
-    data = {
-      query: {
-        data: params
-      }
-    }
-    response = HTTParty.post('https://www.centrodeapuestas.com/centinela/api/v1/ventas/nueva_venta_v2',
-      body: params.to_json,
-      headers: {
-        "Content-Type" => 'application/json',
-        "tokenSPJ" => "6a236abc8aaa8f2ee6964204af0d323748e6320998203146ee97cc1eda30ba3c"
-      }
+  def validate_plays
+    @options.merge!({ body: @plays.to_json })
+    byebug
+    response = HTTParty.post('http://api-dev.caribeapuesta.com/tickets/validar',
+      @options
+    )
+
+    return get_response(response)
+  end
+
+  def add_plays
+    @options.merge!({ body: @plays.to_json })
+    byebug
+    response = HTTParty.post('http://api-dev.caribeapuesta.com/tickets/add',
+      @options
     )
 
     return get_response(response)

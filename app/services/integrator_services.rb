@@ -2,26 +2,28 @@ class IntegratorServices
   include ApplicationHelper
   require 'httparty'
 
-  def initialize
+  def initialize(player)
+    @player = player
     @options = {
       headers: {
-        "apikey" => "a3f49d96b737a2271af304fd3162b062",
-        "Content-Type" => "application/json"
+        "Content-Type" => "application/json",
+        # "Authorization" => "Bearer #{auth_token}"
       }
     }
   end
   
 
-  def get_balance(player)
-    
-    integrator = Integrator.find(player.integrator_id)
-    url = "#{integrator.setting_apis["balance"]["url"]}#{player.player_id}"
+  def get_balance
+    integrator = Integrator.find(@player.integrator_id)
+    url = "#{integrator.setting_apis["balance"]["url"]}#{@player.player_id}"
     response = HTTParty.get(url,@options)
-
+    
+    return { data: { "saldo_actual" => 5000000 } }
     return get_response(response)
   end
 
-  private 
+  private
+  
   def get_response(request)
     {
       data: JSON.parse(request.body),
@@ -29,5 +31,4 @@ class IntegratorServices
       status: request.code
     }
   end
-
 end
