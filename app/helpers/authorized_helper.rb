@@ -12,7 +12,6 @@ module AuthorizedHelper
   end
 
   def auth_header
-    # { Authorization: 'Bearer <token>' }
     token = request.headers['Authorization'].present? ? request.headers['Authorization'] : params[:token]
   end
 
@@ -23,7 +22,7 @@ module AuthorizedHelper
       else
         token = auth_header
       end
-      # header: { 'Authorization': 'Bearer <token>' }
+
       begin
         JWT.decode(token, 's3cr3t', true, algorithm: 'HS256')
       rescue JWT::DecodeError

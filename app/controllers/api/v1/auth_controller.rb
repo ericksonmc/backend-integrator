@@ -48,7 +48,7 @@ class Api::V1::AuthController < ApplicationController
   end
 
   def sorteos
-    @sorteos ||= AuthServices.new.get_sorteos[:data]['0']
+    @sorteos ||= BackofficeServices.new.get_sorteos[:data]['0']
   end
 
   def player_params

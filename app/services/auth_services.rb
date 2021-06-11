@@ -22,11 +22,14 @@ class AuthServices
     return true
   end
 
-  def get_sorteos
-    @options[:headers].merge!({"Authorization" => "Bearer #{auth_token}", "Type" => "web"})
-    url = "http://api-dev.caribeapuesta.com/loteries/get-sorteos"
-    response = HTTParty.get(url,@options)
-    return get_response(response)
+  def renew_token_auth
+    redis = Redis.new
+    token = redis.get('auth_token')
+    
+    return if token.blank?
+    
+    redis.del('auth_token')
+    do_login_web_page
   end
 
   private 

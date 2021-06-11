@@ -11,6 +11,9 @@
 #  integrator_id :integer          not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
+#  username      :string
+#  password      :string
+#  token         :string
 #
 class Player < ApplicationRecord
   

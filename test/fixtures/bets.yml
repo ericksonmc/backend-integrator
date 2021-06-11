@@ -1,0 +1,36 @@
+# == Schema Information
+#
+# Table name: bets
+#
+#  id           :bigint           not null, primary key
+#  ticket_id    :bigint           not null
+#  amount       :float
+#  prize        :float
+#  playerd      :boolean
+#  bet_statu_id :integer
+#  lotery_id    :integer
+#  number       :string
+#  player_id    :bigint           not null
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
+#
+
+one:
+  ticket: one
+  amount: 1.5
+  prize: 1.5
+  playerd: false
+  bet_statu_id: 1
+  lotery_id: 1
+  number: MyString
+  player: one
+
+two:
+  ticket: two
+  amount: 1.5
+  prize: 1.5
+  playerd: false
+  bet_statu_id: 1
+  lotery_id: 1
+  number: MyString
+  player: two

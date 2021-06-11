@@ -10,10 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_03_014455) do
+ActiveRecord::Schema.define(version: 2021_06_11_031201) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "bets", force: :cascade do |t|
+    t.bigint "ticket_id", null: false
+    t.float "amount"
+    t.float "prize"
+    t.boolean "playerd"
+    t.integer "bet_statu_id"
+    t.integer "lotery_id"
+    t.string "number"
+    t.bigint "player_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["player_id"], name: "index_bets_on_player_id"
+    t.index ["ticket_id"], name: "index_bets_on_ticket_id"
+  end
 
   create_table "integrators", force: :cascade do |t|
     t.string "name"
@@ -51,6 +66,27 @@ ActiveRecord::Schema.define(version: 2021_06_03_014455) do
     t.string "token"
   end
 
+  create_table "tickets", force: :cascade do |t|
+    t.integer "number"
+    t.integer "confirm"
+    t.float "total_amount"
+    t.integer "cant_bets"
+    t.integer "remote_user_id"
+    t.integer "ticket_status_id"
+    t.float "prize"
+    t.boolean "payed"
+    t.integer "remote_center_id"
+    t.integer "remote_agency_id"
+    t.integer "remote_group_id"
+    t.integer "remote_master_center_id"
+    t.integer "date_pay"
+    t.string "security"
+    t.bigint "player_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["player_id"], name: "index_tickets_on_player_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "username"
     t.string "password_digest"
@@ -60,4 +96,7 @@ ActiveRecord::Schema.define(version: 2021_06_03_014455) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  add_foreign_key "bets", "players"
+  add_foreign_key "bets", "tickets"
+  add_foreign_key "tickets", "players"
 end
