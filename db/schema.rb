@@ -19,7 +19,7 @@ ActiveRecord::Schema.define(version: 2021_06_11_031201) do
     t.bigint "ticket_id", null: false
     t.float "amount"
     t.float "prize"
-    t.boolean "playerd"
+    t.boolean "played"
     t.integer "bet_statu_id"
     t.integer "lotery_id"
     t.string "number"

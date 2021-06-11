@@ -4,7 +4,7 @@ class CreateBets < ActiveRecord::Migration[6.0]
       t.references :ticket, null: false, foreign_key: true
       t.float :amount
       t.float :prize
-      t.boolean :playerd
+      t.boolean :played
       t.integer :bet_statu_id
       t.integer :lotery_id
       t.string :number
