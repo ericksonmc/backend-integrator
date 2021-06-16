@@ -8,6 +8,11 @@ Rails.application.routes.draw do
         get :auto_login, on: :collection
       end
       resources :sales, only: [:create]
+
+      resources :reports, only: [] do 
+        get :lotery_results, on: :collection
+        get :conult_tickets, on: :collection
+      end
     end
     
   end

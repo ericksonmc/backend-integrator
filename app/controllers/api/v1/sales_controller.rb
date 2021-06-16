@@ -6,7 +6,7 @@ class Api::V1::SalesController < ApplicationController
         if valid_plays?
           if valid_add_plays?
             if ticket
-              render json: generar_ticket
+              render json: { message: 'Jugara realizad con exito', ticket_string: ticket.ticket_string }
             else
               render json: { message: 'Ocurrio un error al guardar la jugada', error: '-04' }, status: 400 and return
             end
@@ -28,18 +28,29 @@ class Api::V1::SalesController < ApplicationController
   private
 
   def generar_ticket
-    texto = ""
-    texto += "CARIBEAPUESTAS" + 10.chr
-    texto += "RIF: J-409540634" + 10.chr
-    texto += "Ticket: ##{ticket.id}" + 10.chr
-    texto += "Serial/S: #{ticket.security}" + 10.chr
-    texto += "Fecha/Hora: #{Time.new.strftime("%d/%m/%Y %H:%M")}" + 10.chr
-    texto += "--------------------------------" + 10.chr
-    texto += "Jugadas Aqui"
-    texto += "--------------------------------" + 10.chr
-    texto += "Jugadas: #{ticket.cant_bets} + Total: #{ticket.total_amount.to_f.round(2)}" + 10.chr
+    
+  end
 
-    texto
+  def ticket
+    @ticket ||= Ticket.create(
+      number: add_plays[0]["number"],
+      confirm: add_plays[0]["confirm"],
+      total_amount: add_plays[0]["total_amount"],
+      cant_bets: add_plays[0]["cant_bets"],
+      remote_user_id: add_plays[0]["user_id"],
+      ticket_status_id: add_plays[0]["ticket_status_id"],
+      prize: add_plays[0]["prize"],
+      payed: add_plays[0]["payed"],
+      remote_center_id: add_plays[0]["center_id"],
+      remote_agency_id: add_plays[0]["agency_id"],
+      remote_group_id: add_plays[0]["group_id"],
+      remote_master_center_id: add_plays[0]["master_center_id"],
+      date_pay: add_plays[0]["date_pay"],
+      security: add_plays[0]["security"],
+      player_id: add_plays[0]["player_id"],
+      ticket_string: generate_ticket_string
+    )
+    generate_bets
   end
 
   def generate_bets
@@ -66,29 +77,19 @@ class Api::V1::SalesController < ApplicationController
     end
   end
 
-  def ticket
-    @ticket ||= Ticket.create(
-      number: add_plays[0]["number"],
-      confirm: add_plays[0]["confirm"],
-      total_amount: add_plays[0]["total_amount"],
-      cant_bets: add_plays[0]["cant_bets"],
-      remote_user_id: add_plays[0]["user_id"],
-      ticket_status_id: add_plays[0]["ticket_status_id"],
-      prize: add_plays[0]["prize"],
-      payed: add_plays[0]["payed"],
-      remote_center_id: add_plays[0]["center_id"],
-      remote_agency_id: add_plays[0]["agency_id"],
-      remote_group_id: add_plays[0]["group_id"],
-      remote_master_center_id: add_plays[0]["master_center_id"],
-      date_pay: add_plays[0]["date_pay"],
-      security: add_plays[0]["security"],
-      player_id: add_plays[0]["player_id"]
-    )
-    generate_bets
-  end
+  def generate_ticket_string
+    texto = ""
+    texto += "CARIBEAPUESTAS" + 10.chr
+    texto += "RIF: J-409540634" + 10.chr
+    texto += "Ticket: ##{add_plays[0]["number"]}" + 10.chr
+    texto += "Serial/S: #{add_plays[0]["confirm"]}" + 10.chr
+    texto += "Fecha/Hora: #{Time.new.strftime("%d/%m/%Y %H:%M")}" + 10.chr
+    texto += "--------------------------------" + 10.chr
+    texto += "Jugadas Aqui"
+    texto += "--------------------------------" + 10.chr
+    texto += "Jugadas: #{add_plays[0]["cant_bets"]} + Total: #{add_plays[0]["total_amount"].to_f.round(2)}" + 10.chr
 
-  def sale_ticket(data)
-    @ticket ||= BackofficeServices.new.send_plays(data)
+    texto
   end
 
   def player_has_balance
@@ -108,7 +109,7 @@ class Api::V1::SalesController < ApplicationController
   end
 
   def plays_validates
-    @plays_validates ||= BackofficeServices.new(current_player, sales_params).validate_plays
+    @plays_validates ||= BackofficeServices.new(current_player: current_player, plays: sales_params).validate_plays
   end
 
   def add_plays
@@ -118,7 +119,7 @@ class Api::V1::SalesController < ApplicationController
       security: 2021050220111514,
       bets: JSON.parse(sales_params.to_json)
     }
-    @add_plays ||= BackofficeServices.new(current_player, data).add_plays
+    @add_plays ||= BackofficeServices.new(current_player: current_player, plays: data).add_plays
   end
 
   def valid_add_plays?
