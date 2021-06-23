@@ -6,7 +6,7 @@ class Api::V1::SalesController < ApplicationController
         if valid_plays?
           if valid_add_plays?
             if ticket
-              render json: { message: 'Jugara realizad con exito', ticket_string: ticket.ticket_string }
+              render json: { message: 'Jugada realizada con exito', ticket_string: @ticket.ticket_string }
             else
               render json: { message: 'Ocurrio un error al guardar la jugada', error: '-04' }, status: 400 and return
             end
@@ -20,7 +20,7 @@ class Api::V1::SalesController < ApplicationController
         render json: { message: 'Recargue saldo para continuar', error: '-01' }, status: 400 and return
       end
     rescue Exception => e
-      render json: { message: 'Ocurrio un error, intente de nuevo mas tarde' }, status: 400 and return
+      render json: { message: 'Ocurrio un error, intente de nuevo mas tarde', error: e.message }, status: 400 and return
     end
   end
 
@@ -33,21 +33,21 @@ class Api::V1::SalesController < ApplicationController
 
   def ticket
     @ticket ||= Ticket.create(
-      number: add_plays[0]["number"],
-      confirm: add_plays[0]["confirm"],
-      total_amount: add_plays[0]["total_amount"],
-      cant_bets: add_plays[0]["cant_bets"],
-      remote_user_id: add_plays[0]["user_id"],
-      ticket_status_id: add_plays[0]["ticket_status_id"],
-      prize: add_plays[0]["prize"],
-      payed: add_plays[0]["payed"],
-      remote_center_id: add_plays[0]["center_id"],
-      remote_agency_id: add_plays[0]["agency_id"],
-      remote_group_id: add_plays[0]["group_id"],
-      remote_master_center_id: add_plays[0]["master_center_id"],
-      date_pay: add_plays[0]["date_pay"],
-      security: add_plays[0]["security"],
-      player_id: add_plays[0]["player_id"],
+      number: add_plays[:data]['0'][0]["number"],
+      confirm: add_plays[:data]['0'][0]["confirm"],
+      total_amount: add_plays[:data]['0'][0]["total_amount"],
+      cant_bets: add_plays[:data]['0'][0]["cant_bets"],
+      remote_user_id: add_plays[:data]['0'][0]["user_id"],
+      ticket_status_id: add_plays[:data]['0'][0]["ticket_status_id"],
+      prize: add_plays[:data]['0'][0]["prize"],
+      payed: add_plays[:data]['0'][0]["payed"],
+      remote_center_id: add_plays[:data]['0'][0]["center_id"],
+      remote_agency_id: add_plays[:data]['0'][0]["agency_id"],
+      remote_group_id: add_plays[:data]['0'][0]["group_id"],
+      remote_master_center_id: add_plays[:data]['0'][0]["master_center_id"],
+      date_pay: add_plays[:data]['0'][0]["date_pay"],
+      security: add_plays[:data]['0'][0]["security"],
+      player_id: current_player.id,
       ticket_string: generate_ticket_string
     )
     generate_bets
@@ -57,9 +57,9 @@ class Api::V1::SalesController < ApplicationController
     begin
       text_sql = ""
 
-      add_plays[0]["bets"].each do |bet|
+      add_plays[:data]['0'][0]["bets"].each do |bet|
         text_sql << "(
-        '#{ticket.id}',
+        '#{@ticket.id}',
         '#{bet["amount"]}',
         '#{bet["prize"]}',
         '#{bet["played"]}',
@@ -72,8 +72,9 @@ class Api::V1::SalesController < ApplicationController
       ActiveRecord::Base.connection.execute("
         insert into bets (id,ticket_id,amount,prize,played,bet_statu_id,lotery_id,number,player_id) values
         " + text_sql[0...-1])
+      return true
     rescue Exception => e
-      render json: { message: e.message }, status: 400 and return
+      return e.message
     end
   end
 
@@ -81,13 +82,13 @@ class Api::V1::SalesController < ApplicationController
     texto = ""
     texto += "CARIBEAPUESTAS" + 10.chr
     texto += "RIF: J-409540634" + 10.chr
-    texto += "Ticket: ##{add_plays[0]["number"]}" + 10.chr
-    texto += "Serial/S: #{add_plays[0]["confirm"]}" + 10.chr
+    texto += "Ticket: ##{add_plays[:data]['0'][0]["number"]}" + 10.chr
+    texto += "Serial/S: #{add_plays[:data]['0'][0]["confirm"]}" + 10.chr
     texto += "Fecha/Hora: #{Time.new.strftime("%d/%m/%Y %H:%M")}" + 10.chr
     texto += "--------------------------------" + 10.chr
     texto += "Jugadas Aqui"
     texto += "--------------------------------" + 10.chr
-    texto += "Jugadas: #{add_plays[0]["cant_bets"]} + Total: #{add_plays[0]["total_amount"].to_f.round(2)}" + 10.chr
+    texto += "Jugadas: #{add_plays[:data]['0'][0]["cant_bets"]} + Total: #{add_plays[:data]['0'][0]["total_amount"].to_f.round(2)}" + 10.chr
 
     texto
   end
@@ -123,13 +124,15 @@ class Api::V1::SalesController < ApplicationController
   end
 
   def valid_add_plays?
-    add_plays
-    # true
+    byebug
+    add_plays[:data]['message'].downcase == 'ok'
+    # valid_add_plays?
   end
 
   def valid_plays?
-    plays_validates[:data]['0']['msj'] == "OK"
-    # return true
+    byebug
+    plays_validates[:data]['0']['msj'].downcase == 'ok'
+    # valid_plays?
   end
     
 end

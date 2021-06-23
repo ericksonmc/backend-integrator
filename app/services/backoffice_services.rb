@@ -3,10 +3,10 @@ class BackofficeServices
   require 'redis'
   require 'httparty'
 
-  def initialize(player: {}, plays: {}, date_from: Time.now, date_to: Time.now)
+  def initialize(current_player: {}, plays: {}, date_from: Time.now, date_to: Time.now)
     @date_from = date_from
     @date_to = date_to
-    @player = player
+    @current_player = current_player
     @plays = plays
     @options = {
       headers: {
