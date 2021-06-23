@@ -124,13 +124,11 @@ class Api::V1::SalesController < ApplicationController
   end
 
   def valid_add_plays?
-    byebug
     add_plays[:data]['message'].downcase == 'ok'
     # valid_add_plays?
   end
 
   def valid_plays?
-    byebug
     plays_validates[:data]['0']['msj'].downcase == 'ok'
     # valid_plays?
   end
