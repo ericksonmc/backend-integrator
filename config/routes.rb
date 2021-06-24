@@ -11,7 +11,7 @@ Rails.application.routes.draw do
 
       resources :reports, only: [] do 
         get :lotery_results, on: :collection
-        get :conult_tickets, on: :collection
+        get :consult_tickets, on: :collection
       end
     end
     
