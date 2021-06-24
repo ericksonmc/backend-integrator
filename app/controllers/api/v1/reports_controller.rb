@@ -10,9 +10,8 @@ class Api::V1::ReportsController < ApplicationController
 
   def conult_tickets
     date_from = params[:date_from].to_time
-    date_to = params[:date_to].to_time
 
-    tickets = Ticket.where(created_at: date_from.beginning_of_day..date_to.end_of_day)
+    tickets = Ticket.where(created_at: date_from.all_day)
 
     render json: tickets
   end

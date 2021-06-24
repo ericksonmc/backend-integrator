@@ -14,7 +14,7 @@ class Api::V1::SalesController < ApplicationController
             render json: { message: 'Ocurrio un error al registrar la jugada', error: '-03'}, status: 400 and return
           end
         else #si las jugadas no tienen limite
-          render json: { data: plays_validates[:data]['0'], message: 'Algunas jugadas requieren atencion', error: '-02' }, status: 400 and return
+          render json: { data: plays_validates[:data]['0'], message: plays_validates[:data]['0']['msj'], error: '-02' }, status: 400 and return
         end
       else
         render json: { message: 'Recargue saldo para continuar', error: '-01' }, status: 400 and return
