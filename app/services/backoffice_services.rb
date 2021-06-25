@@ -23,7 +23,7 @@ class BackofficeServices
     
     return get_response(response)
 
-  rescue StandartError
+  rescue StandardError
    AuthServices.new.renew_token_auth
   end
 
@@ -35,7 +35,7 @@ class BackofficeServices
 
     return get_response(response)
   
-  rescue StandartError
+  rescue StandardError
     AuthServices.new.renew_token_auth
   end
 
@@ -47,18 +47,19 @@ class BackofficeServices
 
     return get_response(response)
 
-  rescue StandartError
+  rescue StandardError
     AuthServices.new.renew_token_auth
   end
 
   def lotery_results
+    byebug
     parsed_date = @date_from.strftime("%Y%m%d")
     url = "http://api-dev.caribeapuesta.com/loteries/results/#{parsed_date}"
     response = HTTParty.get(url,@options)
-    
+    byebug
     return get_response(response)
 
-  rescue StandartError
+  rescue StandardError
     AuthServices.new.renew_token_auth
   end
 

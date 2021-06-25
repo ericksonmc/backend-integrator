@@ -6,7 +6,7 @@
 #  ticket_id    :bigint           not null
 #  amount       :float
 #  prize        :float
-#  playerd      :boolean
+#  played       :boolean
 #  bet_statu_id :integer
 #  lotery_id    :integer
 #  number       :string
