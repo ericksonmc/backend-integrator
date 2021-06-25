@@ -3,11 +3,15 @@ class Api::V1::AuthController < ApplicationController
   before_action :authorized, only: [:auto_login]
 
   def create
-    token = encode_token(player.to_json)
-    if player.present?
-      render json: {token: token, url: "#{base_url}/#{token}"}, status: 200 and return
+    if integrator.present? and integrator.status
+      token = encode_token(player.to_json)
+      if player.present? and 
+        render json: {token: token, url: "#{base_url}/#{token}"}, status: 200 and return
+      else
+        render json: {message: 'Error al logear al jugador'}, status: 400 and return
+      end
     else
-      render json: {message: 'Error al logear al jugador'}, status: 400 and return
+      render json: {message: 'Integrador no encontrado o esta inactivo'}, status: 400 and return
     end
   end
 
@@ -57,9 +61,7 @@ class Api::V1::AuthController < ApplicationController
       :player_id,
       :company,
       :site,
-      :integrator_id,
-      :username,
-      :password
+      :integrator_id
     )
   end
 end

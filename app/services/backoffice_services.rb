@@ -63,7 +63,20 @@ class BackofficeServices
     AuthServices.new.renew_token_auth
   end
 
-  
+  def anulll_ticket
+    #number
+    #confirm
+    @options.merge!({ body: @plays.to_json })
+    response = HTTParty.post('http://api-dev.caribeapuesta.com/tickets/anull',
+      @options
+    )
+
+    return get_response(response)
+
+  rescue StandardError
+    AuthServices.new.renew_token_auth
+  end
+
   def get_response(request)
     raise 'Authentication required' if request.code == 401
     
