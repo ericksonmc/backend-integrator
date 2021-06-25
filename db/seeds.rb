@@ -51,9 +51,14 @@ Product.create([
     name: 'La granjita internacional',
     rules: '',
     type_product: 0,
-    url: 'https://lagranjitaonline.com/'
+    url: 'https://www.instagram.com/lagranjitainternacional'
   },{
     name: 'Ruleta activa',
     rules: '',
     type_product: 0,
+  },{
+    name: 'La Ricachona',
+    rules: '',,
+    type_product: 1,
+    url: 'https://www.instagram.com/laricachonavzla/'
   }])
