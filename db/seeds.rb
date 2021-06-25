@@ -58,7 +58,7 @@ Product.create([
     type_product: 0,
   },{
     name: 'La Ricachona',
-    rules: '',,
+    rules: '',
     type_product: 1,
     url: 'https://www.instagram.com/laricachonavzla/'
   }])
