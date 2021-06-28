@@ -52,11 +52,9 @@ class BackofficeServices
   end
 
   def lotery_results
-    byebug
     parsed_date = @date_from.strftime("%Y%m%d")
     url = "http://api-dev.caribeapuesta.com/loteries/results/#{parsed_date}"
     response = HTTParty.get(url,@options)
-    byebug
     return get_response(response)
 
   rescue StandardError
