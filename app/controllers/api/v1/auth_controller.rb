@@ -55,6 +55,10 @@ class Api::V1::AuthController < ApplicationController
     @sorteos ||= BackofficeServices.new.get_sorteos[:data]['0']
   end
 
+  def integrator
+    @integrator = Integrator.find_by(id: player.integrator_id)
+  end
+
   def player_params
     params.permit(
       :email,

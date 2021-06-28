@@ -4,7 +4,7 @@ module AuthorizedHelper
   end
 
   def current_integrator
-    Integrator.find(logged_in_user.integrator_id)
+    Integrator.find(current_player.integrator_id)
   end
 
   def encode_token(payload)
@@ -36,7 +36,6 @@ module AuthorizedHelper
 
     player_id = JSON.parse(decoded_token[0])['id']
     @player = Player.find_by(id: player_id)
-
     @player
   end
 
