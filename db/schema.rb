@@ -10,10 +10,29 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_24_235852) do
+ActiveRecord::Schema.define(version: 2021_07_09_030034) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "award_details", force: :cascade do |t|
+    t.integer "ticket_id"
+    t.float "amount"
+    t.integer "status", default: 0, null: false
+    t.bigint "award_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["award_id"], name: "index_award_details_on_award_id"
+  end
+
+  create_table "awards", force: :cascade do |t|
+    t.string "number"
+    t.integer "draw_id"
+    t.jsonb "info_re_award"
+    t.integer "status", default: 0, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
 
   create_table "bets", force: :cascade do |t|
     t.bigint "ticket_id", null: false

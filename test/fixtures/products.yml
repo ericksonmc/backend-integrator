@@ -4,7 +4,7 @@
 #
 #  id           :bigint           not null, primary key
 #  name         :string
-#  reglamento   :string
+#  rules        :string
 #  url          :string
 #  type_product :integer
 #  created_at   :datetime         not null
