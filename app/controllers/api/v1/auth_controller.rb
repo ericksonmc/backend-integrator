@@ -6,7 +6,7 @@ class Api::V1::AuthController < ApplicationController
     if integrator.present? and integrator.status
       token = encode_token(player.to_json)
       if player.present? and 
-        render json: {token: token, url: "#{base_url}/#{token}"}, status: 200 and return
+        render json: {token: token, url: "#{base_url}/login/#{token}"}, status: 200 and return
       else
         render json: {message: 'Error al logear al jugador'}, status: 400 and return
       end
