@@ -1,35 +1,33 @@
 class Api::V1::SalesController < ApplicationController
-
+  TRANSACTION_TYPE = {debito: 0, credito: 1}
   def create
     begin
-      if player_has_balance
-        if valid_plays?
-          if valid_add_plays?
-            if ticket
-              render json: { message: 'Jugada realizada con exito', ticket_string: @ticket.ticket_string }
+      ActiveRecord::Base.transaction do
+        if player_has_balance
+          if valid_plays?
+            if valid_add_plays?
+              if ticket
+                byebug
+                render json: { message: 'Jugada realizada con exito', ticket_string: @ticket.ticket_string, saldo_actual: @transaction_cashier[:data]['balance'] }
+              else
+                render json: { message: 'Ocurrio un error al guardar la jugada', error: '-04' }, status: 400 and return
+              end
             else
-              render json: { message: 'Ocurrio un error al guardar la jugada', error: '-04' }, status: 400 and return
+              render json: { message: 'Ocurrio un error al registrar la jugada', error: '-03'}, status: 400 and return
             end
-          else
-            render json: { message: 'Ocurrio un error al registrar la jugada', error: '-03'}, status: 400 and return
+          else #si las jugadas no tienen limite
+            render json: { data: plays_validates[:data]['0'], message: plays_validates[:data]['0']['msj'], error: '-02' }, status: 400 and return
           end
-        else #si las jugadas no tienen limite
-          render json: { data: plays_validates[:data]['0'], message: plays_validates[:data]['0']['msj'], error: '-02' }, status: 400 and return
+        else
+          render json: { message: 'Recargue saldo para continuar', error: '-01' }, status: 400 and return
         end
-      else
-        render json: { message: 'Recargue saldo para continuar', error: '-01' }, status: 400 and return
       end
     rescue Exception => e
       render json: { message: 'Ocurrio un error, intente de nuevo mas tarde', error: e.message }, status: 400 and return
     end
   end
 
-  
   private
-
-  def generar_ticket
-    
-  end
 
   def ticket
     @ticket ||= Ticket.create(
@@ -50,6 +48,7 @@ class Api::V1::SalesController < ApplicationController
       player_id: current_player.id,
       ticket_string: generate_ticket_string
     )
+    send_transaction(@ticket)
     generate_bets
   end
 
@@ -94,11 +93,16 @@ class Api::V1::SalesController < ApplicationController
   end
 
   def player_has_balance
-    balance_player[:data]["saldo_actual"].to_f > total_amount
+    balance_player[:data]["monto"].to_f > total_amount
   end
 
   def balance_player
     @balance_player ||= IntegratorServices.new(current_player).get_balance
+  end
+
+  def send_transaction(current_ticket)
+    @transaction_cashier = IntegratorServices.new(current_player, current_ticket, TRANSACTION_TYPE[:debito]).make_transaction
+    byebug
   end
 
   def sales_params
@@ -106,10 +110,11 @@ class Api::V1::SalesController < ApplicationController
   end
 
   def total_amount
-    sales_params.reduce(0) {|memo, data| memo += data[:amount].to_f}
+    @total_amount ||= sales_params.reduce(0) {|memo, data| memo += data[:amount].to_f}
   end
 
   def plays_validates
+    byebug
     @plays_validates ||= BackofficeServices.new(current_player: current_player, plays: sales_params).validate_plays
   end
 

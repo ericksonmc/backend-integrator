@@ -22,10 +22,10 @@ class Api::V1::AuthController < ApplicationController
       player: current_player,
       producst: sorteos,
       lottery_setup: lottery_setup,
-      saldo_actual: balance[:data]["saldo_actual"]
+      saldo_actual: balance[:data]["monto"]
     }
   end
-  
+
   private
 
   def lottery_setup

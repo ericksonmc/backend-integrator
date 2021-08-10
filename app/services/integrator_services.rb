@@ -2,28 +2,41 @@ class IntegratorServices
   include ApplicationHelper
   require 'httparty'
 
-  def initialize(player)
+  def initialize(player, transaction = nil, transaction_type = nil)
     @player = player
+    @transaction = transaction
+    @transaction_type = transaction_type
+    @integrator = Integrator.find(@player.integrator_id)
     @options = {
       headers: {
-        "Content-Type" => "application/json",
-        # "Authorization" => "Bearer #{auth_token}"
+        'Content-Type' => 'application/json',
       }
     }
   end
-  
 
   def get_balance
-    integrator = Integrator.find(@player.integrator_id)
-    url = "#{integrator.setting_apis["balance"]["url"]}#{@player.player_id}"
-    response = HTTParty.get(url,@options)
     
-    return { data: { "saldo_actual" => 5000000 } }
-    return get_response(response)
+    url = "#{@integrator.setting_apis['balance']['url']}#{@player.player_id}"
+    response = HTTParty.get(url,@options)
+
+    get_response(response)
+  end
+
+  def make_transaction
+    params = {
+      amount: @transaction.total_amount,
+      type_transaccion: @transaction_type,
+      description: @transaction.ticket_string,
+      reference: @transaction.id,
+      player_id: @player.player_id
+    }
+    @options.merge!({ body: params.to_json })
+    response = HTTParty.post(@integrator.setting_apis['casher_transaction']['url'], @options)
+    get_response(response)
   end
 
   private
-  
+
   def get_response(request)
     {
       data: JSON.parse(request.body),
