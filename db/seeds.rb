@@ -4,13 +4,6 @@ User.create!([
 LotterySetup.create!([
   {mmt: 10000.0, mpj: 10000.0, jpt: 500.0, mt: 1000.0}
 ])
-Player.create!([
-  {email: "erick2109@gmail.com", cedula: "20236734", player_id: "360", company: "dataweb ca", site: "www.centrodeapuestas.com", integrator_id: 1, username: nil, password: nil, token: nil},
-  {email: "erick2109@gmail.com", cedula: nil, player_id: "1", company: "CaribeApuestas CA", site: "www.caribeapuestas.com", integrator_id: 2, username: "ericksonmc", password: "Erick2109", token: nil},
-  {email: "ericksonmcc@gmail.com", cedula: nil, player_id: "2", company: "CaribeApuestas CA", site: "www.caribeapuestas.com", integrator_id: 2, username: "ericksonmcc", password: "Erick2109", token: nil},
-  {email: "ericksonmcc@gmail.com", cedula: nil, player_id: "2", company: "CaribeApuestas CA", site: "www.caribeapuestas.com", integrator_id: 6, username: "ericksonmcc", password: "Erick2109", token: nil},
-  {email: "userwebtest@gmail.com", cedula: nil, player_id: nil, company: "CaribeApuestas CA", site: "www.caribeapuestas.com", integrator_id: 2, username: "userwebtest", password: "0000", token: nil}
-])
 
 caribeapuestassettings = {
   "balance": {

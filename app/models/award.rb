@@ -12,5 +12,5 @@
 #
 class Award < ApplicationRecord
   has_many :award_details, dependent: :destroy
-  enum status: { created: 0, award: 1, updated: 2,re_award: 3 }
+  enum status: { created: 0, award: 1, updated: 2, re_award: 3 }
 end
