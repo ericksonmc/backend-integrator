@@ -5,7 +5,7 @@
 #  id         :bigint           not null, primary key
 #  ticket_id  :integer
 #  amount     :float
-#  status     :integer
+#  status     :integer          default("award"), not null
 #  award_id   :bigint
 #  created_at :datetime         not null
 #  updated_at :datetime         not null

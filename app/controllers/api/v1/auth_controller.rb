@@ -3,9 +3,9 @@ class Api::V1::AuthController < ApplicationController
   before_action :authorized, only: [:auto_login]
 
   def create
-    if integrator.present? and integrator.status
+    if integrator.present? && integrator.status
       token = encode_token(player.to_json)
-      if player.present? and 
+      if player.present?
         render json: {token: token, url: "#{base_url}/login/#{token}"}, status: 200 and return
       else
         render json: {message: 'Error al logear al jugador'}, status: 400 and return

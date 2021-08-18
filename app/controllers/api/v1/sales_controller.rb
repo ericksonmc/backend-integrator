@@ -52,47 +52,45 @@ class Api::V1::SalesController < ApplicationController
   end
 
   def generate_bets
-    begin
-      text_sql = ""
-
-      add_plays[:data]['0']["bets"].each do |bet|
-        text_sql << "(
-        '#{@ticket.id}',
-        #{bet["amount"]},
-        #{bet["prize"].to_f},
-        #{bet["payed"]},
-        #{bet["bet_statu_id"]},
-        #{bet["lotery_id"]},
-        '#{bet["number"]}',
-        '#{current_player.id}',
-        now(),
-        now()
-        ),"
-      end
-      sql = "insert into bets (ticket_id,amount,prize,played,bet_statu_id,lotery_id,number,player_id,created_at,updated_at) values " + text_sql[0...-1]
-      ActiveRecord::Base.connection.execute(sql.squish)
-    rescue Exception => e
-      return e.message
+    text_sql = ''
+    byebug
+    add_plays[:data]['0']['bets'].each do |bet|
+      text_sql << "(
+        #{bet['ticket_id']},
+      '#{@ticket.id}',
+      #{bet['amount']},
+      #{bet['prize'].to_f},
+      #{bet['payed']},
+      #{bet['bet_statu_id']},
+      #{bet['lotery_id']},
+      '#{bet['number']}',
+      '#{current_player.id}',
+      now(),
+      now()
+      ),"
     end
+    sql = 'insert into bets (remote_bet_id, ticket_id,amount,prize,played,bet_statu_id,lotery_id,number,player_id,created_at,updated_at) values ' + text_sql[0...-1]
+    ActiveRecord::Base.connection.execute(sql.squish)
   end
 
   def generate_ticket_string
-    texto = ""
-    texto += "CARIBEAPUESTAS" + 10.chr
-    texto += "RIF: J-409540634" + 10.chr
-    texto += "Ticket: ##{add_plays[:data]['0']["number"]}" + 10.chr
-    texto += "Serial/S: #{add_plays[:data]['0']["confirm"]}" + 10.chr
-    texto += "Fecha/Hora: #{Time.new.strftime("%d/%m/%Y %H:%M")}" + 10.chr
-    texto += "--------------------------------" + 10.chr
-    texto += "Jugadas Aqui"
-    texto += "--------------------------------" + 10.chr
-    texto += "Jugadas: #{add_plays[:data]['0']["cant_bets"]} + Total: #{add_plays[:data]['0']["total_amount"].to_f.round(2)}" + 10.chr
+    texto = ''
+    texto += 'CARIBEAPUESTAS' + 10.chr
+    texto += 'RIF: J-409540634' + 10.chr
+    texto += "Ticket: ##{add_plays[:data]['0']['number']}" + 10.chr
+    texto += "Serial/S: #{add_plays[:data]['0']['confirm']}" + 10.chr
+    texto += "Fecha/Hora: #{Time.new.strftime('%d/%m/%Y %H:%M')}" + 10.chr
+    texto += '--------------------------------' + 10.chr
+    texto += 'Jugadas Aqui' + 10.chr
+    texto += '--------------------------------' + 10.chr
+    texto += "Jugadas: #{add_plays[:data]['0']['cant_bets']}" + 10.chr
+    texto += "Total: #{add_plays[:data]['0']['total_amount'].to_f.round(2)}" + 10.chr
 
     texto
   end
 
   def player_has_balance
-    balance_player[:data]["monto"].to_f > total_amount
+    balance_player[:data]['monto'].to_f > total_amount
   end
 
   def balance_player
@@ -100,7 +98,9 @@ class Api::V1::SalesController < ApplicationController
   end
 
   def send_transaction(current_ticket)
-    @transaction_cashier = IntegratorServices.new(current_player, current_ticket, TRANSACTION_TYPE[:debito]).make_transaction
+    @transaction_cashier = {data: {'balance': 50000}}
+
+    # @transaction_cashier = IntegratorServices.new(current_player, current_ticket, TRANSACTION_TYPE[:debito]).make_transaction
   end
 
   def sales_params
@@ -108,7 +108,7 @@ class Api::V1::SalesController < ApplicationController
   end
 
   def total_amount
-    @total_amount ||= sales_params.reduce(0) {|memo, data| memo += data[:amount].to_f}
+    @total_amount ||= sales_params.reduce(0) { |memo, data| memo + data[:amount].to_f }
   end
 
   def plays_validates
