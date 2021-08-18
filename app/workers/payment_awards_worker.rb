@@ -6,7 +6,6 @@ class PaymentAwardsWorker
     @ticket_pay = ticket_pay
     @ticket = ticket(@ticket_pay['ticket_id'])
     @player = player(@ticket.player_id)
-    byebug
     params = {
       amount: @ticket_pay['premio'],
       type_transaccion: 1,
@@ -14,9 +13,9 @@ class PaymentAwardsWorker
       reference: @ticket_pay['ticket_id'],
       player_id: @player.player_id
     }
+
     transaction(params, 1)
-    byebug
-    
+        
     unless @transaction[:status] == 200
       raise StandardError.new "No se puedo pagar el siguiente premio: #{@ticket_pay} - #{player.to_i}"
     end
@@ -25,7 +24,6 @@ class PaymentAwardsWorker
   private
 
   def transaction(transaction, transaction_type)
-    byebug
     @transaction = IntegratorServices.new(@player, transaction, transaction_type).pay_award
   end
 
