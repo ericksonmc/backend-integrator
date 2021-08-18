@@ -1,7 +1,6 @@
 class Api::V1::AwardsController < ApplicationController
   skip_before_action :authorized
   before_action :check_awards_params, only: [:create]
-  after_action :excute_award_daemon, only: [:create]
 
   def create
     awards = params['_json'].as_json
@@ -49,10 +48,6 @@ class Api::V1::AwardsController < ApplicationController
 
   def exist_award?(draw_id)
     @award = Award.where(created_at: Time.now.all_day, draw_id: draw_id).last
-  end
-
-  def excute_award_daemon
-    PaymentAwardsWorker.perform_async(awards: @awards_total, rewarded_awards: @rewarded_awards)
   end
 
   def check_awards_params

@@ -15,15 +15,9 @@ class IntegratorServices
   end
 
   def get_balance
-    
     url = "#{@integrator.setting_apis['balance']['url']}#{@player.player_id}"
     response = HTTParty.get(url,@options)
-
-    return {
-      data: { 'monto' => 50000000 }
-    }
-    
-    # get_response(response)
+    get_response(response)
   end
 
   def make_transaction

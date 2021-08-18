@@ -4,15 +4,18 @@ class PaymentAwardsWorker
   def perform(ticket_pay)
     # ticket_pay: {ticket_id: 881413, premio: 600000.0}
     @ticket_pay = ticket_pay
-
+    @ticket = ticket(@ticket_pay['ticket_id'])
+    @player = player(@ticket.player_id)
+    byebug
     params = {
-      amount: @ticket_pay[:premio],
+      amount: @ticket_pay['premio'],
       type_transaccion: 1,
       description: 'Pago de premio',
-      reference: @ticket_pay[:ticket_id],
-      player_id: player_id.player_id
+      reference: @ticket_pay['ticket_id'],
+      player_id: @player.player_id
     }
-    transaction(player, params, 1)
+    transaction(params, 1)
+    byebug
     
     unless @transaction[:status] == 200
       raise StandardError.new "No se puedo pagar el siguiente premio: #{@ticket_pay} - #{player.to_i}"
@@ -21,15 +24,16 @@ class PaymentAwardsWorker
 
   private
 
-  def transaction(player, transaction, transaction_type)
-    @transaction = IntegratorServices.new(player, transaction, transaction_type).pay_award
+  def transaction(transaction, transaction_type)
+    byebug
+    @transaction = IntegratorServices.new(@player, transaction, transaction_type).pay_award
   end
 
-  def ticket
-    @ticket ||= Ticket.find(@ticket_pay[:ticket_id])
+  def ticket(ticket_id)
+    @ticket = Ticket.find_by(number: ticket_id)
   end
 
-  def player
-    @player ||= Player.find(ticket.player_id)
+  def player(player_id)
+    @player = Player.find(player_id)
   end
 end
