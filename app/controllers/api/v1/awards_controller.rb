@@ -7,30 +7,33 @@ class Api::V1::AwardsController < ApplicationController
     @awards_total = []
     @rewarded_awards = []
     @bets_awards = []
-    byebug
     begin
       ActiveRecord::Base.transaction do
-        awards.each do |draw_award|
-          if exist_award?(draw_award['sorteo']).present?
+        awards.each do |draw_award|  
+          exist = exist_award?(draw_award['sorteo']).present?
+          if exist
             @award.update(info_re_award: draw_award['apuestas'], number: draw_award['numero'], status: 'updated')
-            @rewarded_awards << @award
+            @award.award_details.update_all(status: 'pending_revert')
+            @rewarded_awards << @award.id
           else
-            award = Award.create({ number: draw_award['numero'], draw_id: draw_award['sorteo'] })
-            if draw_award['apuestas'].present?
-              award_details = draw_award['apuestas'].map do |detail|
-                {
-                  ticket_id: detail['id_apuesta'],
-                  amount: detail['premio'],
-                  award_id: award.id,
-                  created_at: Time.now,
-                  updated_at: Time.now
-                }
-              end
-              AwardDetail.insert_all(award_details)
-              @bets_awards.concat award_details
-            end
-            @awards_total << award
+            @award = Award.create({ number: draw_award['numero'], draw_id: draw_award['sorteo'] })
           end
+
+          award_details = draw_award['apuestas']&.map do |detail|
+            {
+              ticket_id: detail['id_apuesta'],
+              amount: detail['premio'],
+              award_id: @award.id,
+              reaward: exist,
+              created_at: Time.now,
+              updated_at: Time.now
+            }
+          end
+
+          AwardDetail.insert_all(award_details)
+          @bets_awards.concat award_details
+
+          @awards_total << @award
         end
         updated_amount_awards(@bets_awards)
       end
@@ -64,6 +67,15 @@ class Api::V1::AwardsController < ApplicationController
         }.inject(0) { |sum,hash| sum + hash[:amount].to_f }
       }
     }
+
+    if @rewarded_awards.present?
+      @rewarded_awards.each do |reward|
+        awards_to_rever = Award.find(reward).award_details.where(status: 'pending_revert')
+        awards_to_rever.each do |award_detail_to_revert|
+          RevertAwardsWorker.perform_async(award_detail_to_revert.attributes)
+        end
+      end
+    end
 
     tickets_to_pay.each{ |tickets_pay|
       PaymentAwardsWorker.perform_async(tickets_pay)

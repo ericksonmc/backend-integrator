@@ -1,23 +1,27 @@
 class PaymentAwardsWorker
   include Sidekiq::Worker
+  TYPE_TRANSACTION = {withdrawal: 0, payment: 1}
 
+  # ticket_pay: {ticket_id: 881413, premio: 600000.0}
   def perform(ticket_pay)
-    # ticket_pay: {ticket_id: 881413, premio: 600000.0}
     @ticket_pay = ticket_pay
     @ticket = ticket(@ticket_pay['ticket_id'])
     @player = player(@ticket.player_id)
+
     params = {
       amount: @ticket_pay['premio'],
-      type_transaccion: 1,
+      type_transaccion: TYPE_TRANSACTION[:payment],
       description: 'Pago de premio',
       reference: @ticket_pay['ticket_id'],
       player_id: @player.player_id
     }
 
-    transaction(params, 1)
+    transaction(params, TYPE_TRANSACTION[:payment])
         
-    unless @transaction[:status] == 200
-      raise StandardError.new "No se puedo pagar el siguiente premio: #{@ticket_pay} - #{player.to_i}"
+    if @transaction[:status] == 200
+      @ticket.update(prize: @ticket_pay['premio'], payed: true, date_pay: Time.now)
+    else
+      @ticket.update(prize: @ticket_pay['premio'], payed: false, date_pay: Time.now)
     end
   end
 
