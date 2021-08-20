@@ -52,7 +52,15 @@ class Api::V1::AuthController < ApplicationController
   end
 
   def sorteos
-    @sorteos ||= BackofficeServices.new.get_sorteos[:data]['0']
+    redis = Redis.new
+    unless redis.get('sorteos').present?
+      @sorteos ||= BackofficeServices.new.get_sorteos[:data]['0']
+      redis.set('sorteos', @sorteos.to_json)
+      redis.expireat('sorteos',Time.now.end_of_day.to_i)
+    else
+      sorteos = redis.get('sorteos')
+      @sorteos ||= JSON.parse(sorteos)
+    end
   end
 
   def integrator

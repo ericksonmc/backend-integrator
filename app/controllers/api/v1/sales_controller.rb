@@ -80,7 +80,7 @@ class Api::V1::SalesController < ApplicationController
     texto += "Serial/S: #{add_plays[:data]['0']['confirm']}" + 10.chr
     texto += "Fecha/Hora: #{Time.new.strftime('%d/%m/%Y %H:%M')}" + 10.chr
     texto += '--------------------------------' + 10.chr
-    texto += 'Jugadas Aqui' + 10.chr
+    texto += agroup_bets(add_plays[:data]['0']['bets'])
     texto += '--------------------------------' + 10.chr
     texto += "Jugadas: #{add_plays[:data]['0']['cant_bets']}" + 10.chr
     texto += "Total: #{add_plays[:data]['0']['total_amount'].to_f.round(2)}" + 10.chr
@@ -128,5 +128,34 @@ class Api::V1::SalesController < ApplicationController
 
   def valid_plays?
     plays_validates[:data]['0']['msj'].downcase == 'ok'
+  end
+
+  def sorteos
+    redis = Redis.new
+    unless redis.get('sorteos').present?
+      @sorteos ||= BackofficeServices.new.get_sorteos[:data]['0']
+      redis.set('sorteos', @sorteos.to_json)
+      redis.expireat('sorteos',Time.now.end_of_day.to_i)
+    else
+      sorteos = redis.get('sorteos')
+      @sorteos ||= JSON.parse(sorteos)
+    end
+  end
+
+  def agroup_bets(bets)
+    byebug
+    played_draws = bets.pluck('lotery_id').uniq
+    texto = ""
+
+    played_draws.each { |lotery_id|
+      texto += "#{sorteo_name(lotery_id)}:" + 10.chr
+      texto += bets.select { |bet| bet['lotery_id'] == lotery_id}.pluck('number').join('- ')
+      texto += 10.chr
+    }
+    texto
+  end
+
+  def sorteo_name(sorteo_id)
+    sorteos.select { |sorteo| sorteo['id'] == sorteo_id}[0]['name']
   end
 end
