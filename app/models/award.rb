@@ -6,7 +6,7 @@
 #  number        :string
 #  draw_id       :integer
 #  info_re_award :jsonb
-#  status        :integer
+#  status        :integer          default("created"), not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #

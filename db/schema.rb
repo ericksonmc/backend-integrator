@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_09_030034) do
+ActiveRecord::Schema.define(version: 2021_08_19_010752) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,6 +22,7 @@ ActiveRecord::Schema.define(version: 2021_07_09_030034) do
     t.bigint "award_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.boolean "reaward", default: false
     t.index ["award_id"], name: "index_award_details_on_award_id"
   end
 
@@ -45,6 +46,7 @@ ActiveRecord::Schema.define(version: 2021_07_09_030034) do
     t.bigint "player_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "remote_bet_id"
     t.index ["player_id"], name: "index_bets_on_player_id"
     t.index ["ticket_id"], name: "index_bets_on_ticket_id"
   end
