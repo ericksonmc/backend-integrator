@@ -6,6 +6,9 @@ class RevertAwardsWorker
   def perform(reward)
     @reward = AwardDetail.find(reward['id'])
     @ticket = ticket(@reward.ticket_id)
+
+    return unless @ticket.present?
+
     @player = player(@ticket.player_id)
 
     @balance = get_balance
