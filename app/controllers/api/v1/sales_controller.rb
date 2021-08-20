@@ -143,7 +143,6 @@ class Api::V1::SalesController < ApplicationController
   end
 
   def agroup_bets(bets)
-    byebug
     played_draws = bets.pluck('lotery_id').uniq
     texto = ""
 
