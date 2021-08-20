@@ -53,7 +53,6 @@ class Api::V1::SalesController < ApplicationController
 
   def generate_bets
     text_sql = ''
-    byebug
     add_plays[:data]['0']['bets'].each do |bet|
       text_sql << "(
         #{bet['ticket_id']},
@@ -98,9 +97,7 @@ class Api::V1::SalesController < ApplicationController
   end
 
   def send_transaction(current_ticket)
-    @transaction_cashier = {data: {'balance': 50000}}
-
-    # @transaction_cashier = IntegratorServices.new(current_player, current_ticket, TRANSACTION_TYPE[:debito]).make_transaction
+    @transaction_cashier = IntegratorServices.new(current_player, current_ticket, TRANSACTION_TYPE[:debito]).make_transaction
   end
 
   def sales_params
