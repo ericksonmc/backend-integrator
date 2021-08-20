@@ -62,8 +62,6 @@ class BackofficeServices
   end
 
   def anulll_ticket
-    #number
-    #confirm
     @options.merge!({ body: @plays.to_json })
     response = HTTParty.post('http://api-dev.caribeapuesta.com/tickets/anull',
       @options

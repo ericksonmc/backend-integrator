@@ -6,6 +6,9 @@ class PaymentAwardsWorker
   def perform(ticket_pay)
     @ticket_pay = ticket_pay
     @ticket = ticket(@ticket_pay['ticket_id'])
+
+    return unless @ticket.present?
+
     @player = player(@ticket.player_id)
 
     params = {
