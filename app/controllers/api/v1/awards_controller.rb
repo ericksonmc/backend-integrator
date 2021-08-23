@@ -61,7 +61,6 @@ class Api::V1::AwardsController < ApplicationController
 
   # bets_awards ticket_id bet_id amount award_id reaward
   def updated_amount_awards(bets_awards)
-  byebug
     tickets_to_pay = bets_awards.pluck(:ticket_id).uniq.map{ |ticket_id|
       {
         ticket_id: ticket_id,
