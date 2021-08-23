@@ -12,7 +12,7 @@ class PaymentAwardsWorker
     @player = player(@ticket.player_id)
 
     params = {
-      amount: @ticket_pay['premio'],
+      amount: @ticket_pay['premio'].to_f,
       type_transaccion: TYPE_TRANSACTION[:payment],
       description: 'Pago de premio',
       reference: @ticket_pay['ticket_id'],
@@ -34,8 +34,8 @@ class PaymentAwardsWorker
     @transaction = IntegratorServices.new(@player, transaction, transaction_type).pay_award
   end
 
-  def ticket(ticket_id)
-    @ticket = Ticket.find_by(id: ticket_id)
+  def ticket(id)
+    @ticket = Ticket.find(id)
   end
 
   def player(player_id)
