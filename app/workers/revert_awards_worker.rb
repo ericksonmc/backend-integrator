@@ -45,7 +45,7 @@ class RevertAwardsWorker
   end
 
   def ticket(ticket_id)
-    @ticket = Ticket.find_by(number: ticket_id)
+    @ticket = Ticket.find_by(id: ticket_id)
   end
 
   def player(player_id)
