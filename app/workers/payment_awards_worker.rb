@@ -2,7 +2,7 @@ class PaymentAwardsWorker
   include Sidekiq::Worker
   TYPE_TRANSACTION = {withdrawal: 0, payment: 1}
 
-  # ticket_pay: {ticket_id: 881413, premio: 600000.0}
+  # ticket_pay: {ticket_id: 27, premio: 600000.0}
   def perform(ticket_pay)
     @ticket_pay = ticket_pay
     @ticket = ticket(@ticket_pay['ticket_id'])
@@ -35,7 +35,7 @@ class PaymentAwardsWorker
   end
 
   def ticket(ticket_id)
-    @ticket = Ticket.find_by(number: ticket_id)
+    @ticket = Ticket.find_by(id: ticket_id)
   end
 
   def player(player_id)
