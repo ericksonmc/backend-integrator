@@ -55,7 +55,7 @@ class Api::V1::SalesController < ApplicationController
     text_sql = ''
     add_plays[:data]['0']['bets'].each do |bet|
       text_sql << "(
-        #{bet['ticket_id']},
+        #{bet['id']},
       '#{@ticket.id}',
       #{bet['amount']},
       #{bet['prize'].to_f},
