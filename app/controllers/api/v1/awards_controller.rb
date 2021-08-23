@@ -21,7 +21,8 @@ class Api::V1::AwardsController < ApplicationController
 
           award_details = draw_award['apuestas']&.map do |detail|
             {
-              ticket_id: detail['id_apuesta'],
+              ticket_id: Bet.find_by(remote_bet_id: detail['id_apuesta']).ticket_id,
+              bet_id: detail['id_apuesta'],
               amount: detail['premio'],
               award_id: @award.id,
               reaward: exist,
@@ -58,12 +59,14 @@ class Api::V1::AwardsController < ApplicationController
     render json: { message: 'Parametros vacios', status: 'empty' }, status: 400 and return if awards.blank?
   end
 
+  # bets_awards ticket_id bet_id amount award_id reaward
   def updated_amount_awards(bets_awards)
+  byebug
     tickets_to_pay = bets_awards.pluck(:ticket_id).uniq.map{ |ticket_id|
       {
         ticket_id: ticket_id,
-        premio: bets_awards.select{ |award|
-          award[:ticket_id] == ticket_id
+        premio: bets_awards.select{ |bet|
+          bet[:ticket_id] == ticket_id
         }.inject(0) { |sum,hash| sum + hash[:amount].to_f }
       }
     }
