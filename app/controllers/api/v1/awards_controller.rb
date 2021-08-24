@@ -80,6 +80,9 @@ class Api::V1::AwardsController < ApplicationController
     end
 
     tickets_to_pay.each{ |tickets_pay|
+      Rails.logger.info "*************************************************************************"
+      Rails.logger.info tickets_pay
+      Rails.logger.info "*************************************************************************"
       PaymentAwardsWorker.perform_async(tickets_pay)
     }
   end
