@@ -81,7 +81,14 @@ test:
 #
 production:
   <<: *default
+<<<<<<< HEAD
   database: caribeapuestas_backend_production
   host: 127.0.0.1
   username: postgres
   password: 
+=======
+  database: caribeapuestas_backend_development
+  username: postgres
+  host: 127.0.0.1
+  password: ''
+>>>>>>> f0557e52624741e07bdcab626e652ea4cb160fd7
