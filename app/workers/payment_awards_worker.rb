@@ -1,8 +1,9 @@
 class PaymentAwardsWorker
   include Sidekiq::Worker
-  TYPE_TRANSACTION = {withdrawal: 0, payment: 1}
+  TYPE_TRANSACTION = { withdrawal: 0, payment: 1 }.freeze
 
   # ticket_pay: {ticket_id: 27, premio: 600000.0}
+
   def perform(ticket_pay)
     @ticket_pay = ticket_pay
     @ticket = ticket(@ticket_pay['ticket_id'])
@@ -20,11 +21,11 @@ class PaymentAwardsWorker
     }
 
     transaction(params, TYPE_TRANSACTION[:payment])
-        
+
     if @transaction[:status] == 200
-      @ticket.update(prize: @ticket_pay['premio'], payed: true, date_pay: Time.now)
+      @ticket.update(prize: @ticket_pay['premio'], payed: true, date_pay: Time.now.to_i)
     else
-      @ticket.update(prize: @ticket_pay['premio'], payed: false, date_pay: Time.now)
+      @ticket.update(prize: @ticket_pay['premio'], payed: false, date_pay: Time.now.to_i)
     end
   end
 

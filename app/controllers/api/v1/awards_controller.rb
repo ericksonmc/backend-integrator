@@ -61,12 +61,12 @@ class Api::V1::AwardsController < ApplicationController
 
   # bets_awards ticket_id bet_id amount award_id reaward
   def updated_amount_awards(bets_awards)
-    tickets_to_pay = bets_awards.pluck(:ticket_id).uniq.map{ |ticket_id|
+    tickets_to_pay = bets_awards.pluck(:ticket_id).uniq.map { |ticket_id|
       {
         ticket_id: ticket_id,
         premio: bets_awards.select{ |bet|
           bet[:ticket_id] == ticket_id
-        }.inject(0) { |sum,hash| sum + hash[:amount].to_f }
+        }.inject(0) { |sum, hash| sum + hash[:amount].to_f }
       }
     }
 
@@ -80,9 +80,6 @@ class Api::V1::AwardsController < ApplicationController
     end
 
     tickets_to_pay.each{ |tickets_pay|
-      Rails.logger.info "*************************************************************************"
-      Rails.logger.info tickets_pay
-      Rails.logger.info "*************************************************************************"
       PaymentAwardsWorker.perform_async(tickets_pay)
     }
   end
