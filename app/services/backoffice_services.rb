@@ -10,21 +10,20 @@ class BackofficeServices
     @plays = plays
     @options = {
       headers: {
-        "Content-Type" => 'application/json',
-        "Type" => "web",
-        "Authorization" => "Bearer #{auth_token}"
+        'Content-Type' => 'application/json',
+        'Type' => 'web',
+        'Authorization' => "Bearer #{auth_token}"
       }
     }
   end
 
   def get_sorteos
-    url = "http://api-dev.caribeapuesta.com/loteries/get-sorteos"
-    response = HTTParty.get(url,@options)
-    
-    return get_response(response)
+    url = 'http://api-dev.caribeapuesta.com/loteries/get-sorteos-by-lotteries'
+    response = HTTParty.get(url, @options)
 
+    return get_response(response)
   rescue StandardError
-   AuthServices.new.renew_token_auth
+    AuthServices.new.renew_token_auth
   end
 
   def validate_plays
@@ -33,8 +32,7 @@ class BackofficeServices
       @options
     )
 
-    return get_response(response)
-  
+    return get_response(response)  
   rescue StandardError
     AuthServices.new.renew_token_auth
   end
@@ -44,9 +42,7 @@ class BackofficeServices
     response = HTTParty.post('http://api-dev.caribeapuesta.com/tickets/add',
       @options
     )
-
     return get_response(response)
-
   rescue StandardError
     AuthServices.new.renew_token_auth
   end
