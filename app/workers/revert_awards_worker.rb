@@ -11,7 +11,7 @@ class RevertAwardsWorker
 
     @player = player(@ticket.player_id)
 
-    @balance = get_balance
+    @balance = request_balance
 
     if @balance.to_f > @reward.amount.to_f
       
@@ -52,8 +52,8 @@ class RevertAwardsWorker
     @player = Player.find(player_id)
   end
 
-  def get_balance
-    balance = IntegratorServices.new(@player).get_balance
+  def request_balance
+    balance = IntegratorServices.new(@player).request_balance
 
     return balance[:data]['monto']
   end
