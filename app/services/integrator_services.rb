@@ -9,12 +9,12 @@ class IntegratorServices
     @integrator = Integrator.find(@player.integrator_id)
     @options = {
       headers: {
-        'Content-Type' => 'application/json',
+        'Content-Type' => 'application/json'
       }
     }
   end
 
-  def get_balance
+  def request_balance
     url = "#{@integrator.setting_apis['balance']['url']}#{@player.player_id}"
     response = HTTParty.get(url,@options)
     get_response(response)

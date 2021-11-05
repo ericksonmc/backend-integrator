@@ -64,9 +64,9 @@ class Api::V1::AwardsController < ApplicationController
     tickets_to_pay = bets_awards.pluck(:ticket_id).uniq.map { |ticket_id|
       {
         ticket_id: ticket_id,
-        premio: bets_awards.select{ |bet|
-          bet[:ticket_id] == ticket_id
-        }.inject(0) { |sum, hash| sum + hash[:amount].to_f }
+        premio: bets_awards.select { |bet| bet[:ticket_id] == ticket_id }.inject(0) { |sum, hash|
+          sum + hash[:amount].to_f
+        }
       }
     }
 
