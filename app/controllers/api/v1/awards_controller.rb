@@ -9,7 +9,7 @@ class Api::V1::AwardsController < ApplicationController
     @bets_awards = []
     begin
       ActiveRecord::Base.transaction do
-        awards.each do |draw_award|  
+        awards.each do |draw_award|
           exist = exist_award?(draw_award['sorteo']).present?
           if exist
             @award.update(info_re_award: draw_award['apuestas'], number: draw_award['numero'], status: 'updated')

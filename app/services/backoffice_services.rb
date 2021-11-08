@@ -2,7 +2,7 @@ class BackofficeServices
   include ApplicationHelper
   require 'redis'
   require 'httparty'
-  BASE_URL = 'http://api-dev.caribeapuesta.com'.freeze
+  BASE_URL = 'http://api.caribeapuesta.com'.freeze
 
   def initialize(current_player: {}, plays: {}, date_from: Time.now, date_to: Time.now)
     @date_from = date_from
