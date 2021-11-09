@@ -4,7 +4,7 @@ class Api::V1::AuthController < ApplicationController
 
   def create
     render json: { message: 'Integrador no encontrado o esta inactivo' }, status: 400 and return unless valid_integrator
-    byebug
+    # byebug
     render json: { token: token, url: "#{base_url}/login/#{token}" }, status: 200 and return if player.present?
 
     render json: { message: 'Error al obtener la informacion del jugador' }, status: 400 and return
@@ -43,7 +43,7 @@ class Api::V1::AuthController < ApplicationController
   end
 
   def set_token
-    byebug
+    # byebug
     return if auth_token("#{@player.currency}").present?
 
     auth_service = AuthServices.new(key: "#{@player.currency}").do_login_web_page
@@ -52,7 +52,7 @@ class Api::V1::AuthController < ApplicationController
 
   def sorteos
     redis = Redis.new
-    byebug
+    # byebug
     if redis.get('sorteos').present?
       sorteos = redis.get('sorteos')
       @sorteos ||= JSON.parse(sorteos)
