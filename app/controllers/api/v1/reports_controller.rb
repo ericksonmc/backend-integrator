@@ -3,7 +3,7 @@ class Api::V1::ReportsController < ApplicationController
   def lotery_results
     date_from = params[:date_from].to_time
 
-    results = BackofficeServices.new(date_from: date_from).lotery_results
+    results = BackofficeServices.new(current_player: current_player, date_from: date_from).lotery_results
 
     render json: results[:data]
   end

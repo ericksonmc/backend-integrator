@@ -16,7 +16,7 @@ class IntegratorServices
 
   def request_balance
     url = "#{@integrator.setting_apis['balance']['url']}#{@player.player_id}"
-    response = HTTParty.get(url,@options)
+    response = HTTParty.get(url, @options)
     get_response(response)
   end
 

@@ -18,7 +18,7 @@ class BackofficeServices
 
     get_response(response)
   rescue StandardError
-    AuthServices.new.renew_token_auth
+    AuthServices.new(currency: @current_player.currency).renew_token_auth
   end
 
   def validate_plays
@@ -27,7 +27,7 @@ class BackofficeServices
 
     get_response(response)
   rescue StandardError
-    AuthServices.new.renew_token_auth
+    AuthServices.new(currency: @current_player.currency).renew_token_auth
   end
 
   def add_plays
@@ -35,7 +35,7 @@ class BackofficeServices
     response = HTTParty.post("#{BASE_URL}/tickets/add", @options)
     get_response(response)
   rescue StandardError
-    AuthServices.new.renew_token_auth
+    AuthServices.new(currency: @current_player.currency).renew_token_auth
   end
 
   def lotery_results
@@ -44,7 +44,7 @@ class BackofficeServices
     response = HTTParty.get(url,@options)
     get_response(response)
   rescue StandardError
-    AuthServices.new.renew_token_auth
+    AuthServices.new(currency: @current_player.currency).renew_token_auth
   end
 
   def anulll_ticket
@@ -53,7 +53,7 @@ class BackofficeServices
 
     get_response(response)
   rescue StandardError
-    AuthServices.new.renew_token_auth
+    AuthServices.new(currency: @current_player.currency).renew_token_auth
   end
 
   def get_response(request)
@@ -73,7 +73,7 @@ class BackofficeServices
       headers: {
         'Content-Type' => 'application/json',
         'Type' => 'web',
-        'Authorization' => "Bearer #{auth_token}"
+        'Authorization' => "Bearer #{auth_token(@current_player.currency)}"
       }
     }
   end

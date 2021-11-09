@@ -2,10 +2,13 @@ class AuthServices
   include ApplicationHelper
   require 'httparty'
   BASE_URL = 'http://api-dev.caribeapuesta.com'.freeze
-  BS_USER = { username: 'userwebtest', password: '0000' }.freeze
-  USD_USER = { username: 'userwebtestd', password: '0000' }.freeze
+  USERS = {
+    VES_USER: { username: 'userwebtest', password: '0000' },
+    USD_USER: { username: 'TESTLUIS', password: '123456' }
+  }.freeze
 
-  def initialize()
+  def initialize(key: 'VES_token')
+    @key = key
     @options = {
       headers: {
         'Content-Type' => 'application/json'
@@ -14,23 +17,19 @@ class AuthServices
   end
 
   def do_login_web_page
-    return if auth_token.present?
+    return if auth_token(@key).present?
 
-    @options.merge!({ body: { username: 'userwebtest', password: '0000' }.to_json })
+    @options.merge!({ body: USERS["#{@key}_USER".to_sym].to_json })
+    byebug
     response = HTTParty.post("#{BASE_URL}/users/token/userwebtest", @options)
     data = get_response(response)[:data]
 
-    set_auth_token(data['token'])
+    set_auth_token(@key, data['token'])
     return true
   end
 
   def renew_token_auth
     redis = Redis.new
-    token = redis.get('auth_token')
-
-    return if token.blank?
-
-    redis.del('auth_token')
     do_login_web_page
   end
 

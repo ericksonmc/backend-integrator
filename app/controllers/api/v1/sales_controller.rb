@@ -133,13 +133,13 @@ class Api::V1::SalesController < ApplicationController
 
   def sorteos
     redis = Redis.new
-    unless redis.get('sorteos').present?
-      @sorteos ||= BackofficeServices.new.request_sorteos[:data]['0']
-      redis.set('sorteos', @sorteos.to_json)
-      redis.expireat('sorteos',Time.now.end_of_day.to_i)
-    else
+    if redis.get('sorteos').present?
       sorteos = redis.get('sorteos')
       @sorteos ||= JSON.parse(sorteos)
+    else
+      @sorteos ||= BackofficeServices.new(current_player: current_player).request_sorteos[:data]['0']
+      redis.set('sorteos', @sorteos.to_json)
+      redis.expireat('sorteos', Time.now.end_of_day.to_i)
     end
   end
 

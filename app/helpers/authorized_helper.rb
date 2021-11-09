@@ -16,18 +16,14 @@ module AuthorizedHelper
   end
 
   def decoded_token
-    if auth_header
-      if auth_header.include? "Bearer"
-        token = auth_header.split(" ")[1]
-      else
-        token = auth_header
-      end
+    return unless auth_header
 
-      begin
-        JWT.decode(token, 's3cr3t', true, algorithm: 'HS256')
-      rescue JWT::DecodeError
-        nil
-      end
+    token = auth_header.include?("Bearer") ? token = auth_header.split(" ")[1] : auth_header
+
+    begin
+      JWT.decode(token, 's3cr3t', true, algorithm: 'HS256')
+    rescue JWT::DecodeError
+      nil
     end
   end
 
