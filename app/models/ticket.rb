@@ -24,4 +24,6 @@
 #
 class Ticket < ApplicationRecord
   belongs_to :player
+
+  has_many :bets
 end
