@@ -20,7 +20,7 @@ class AuthServices
     return if auth_token(@key).present?
 
     @options.merge!({ body: USERS["#{@key}_USER".to_sym].to_json })
-    byebug
+    # byebug
     response = HTTParty.post("#{BASE_URL}/users/token/userwebtest", @options)
     data = get_response(response)[:data]
 
