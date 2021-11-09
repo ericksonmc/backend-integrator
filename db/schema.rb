@@ -10,15 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-ActiveRecord::Schema.define(version: 2021_03_03_140922) do
-=======
 ActiveRecord::Schema.define(version: 2021_11_09_153146) do
->>>>>>> Stashed changes
-=======
-ActiveRecord::Schema.define(version: 2021_08_23_182918) do
->>>>>>> main
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -94,10 +86,7 @@ ActiveRecord::Schema.define(version: 2021_08_23_182918) do
     t.string "username"
     t.string "password"
     t.string "token"
-<<<<<<< HEAD
     t.string "currency"
-=======
->>>>>>> main
   end
 
   create_table "products", force: :cascade do |t|
