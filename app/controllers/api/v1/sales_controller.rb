@@ -1,15 +1,30 @@
 class Api::V1::SalesController < ApplicationController
-  before_action :authorized
-  before_action :balance_player
+  TRANSACTION_TYPE = {debito: 0, credito: 1}
 
   def create
-    if player_has_balance
-      ticket = sale_ticket(sales_params.to_h)
-      render json: ticket
-    else
-      render json: {message: "Saldo insuficiente"}, status: 400 and return
+    begin
+      ActiveRecord::Base.transaction do
+        if player_has_balance
+          if valid_plays?
+            if valid_add_plays?
+              if ticket
+                render json: { message: 'Jugada realizada con exito', ticket_string: @ticket.ticket_string, saldo_actual: @transaction_cashier[:data]['balance'] }
+              else
+                render json: { message: 'Ocurrio un error al guardar la jugada', error: '-04' }, status: 400 and return
+              end
+            else
+              render json: { message: 'Ocurrio un error al registrar la jugada', error: '-03'}, status: 400 and return
+            end
+          else #si las jugadas no tienen limite
+            render json: { data: plays_validates[:data]['0'], message: plays_validates[:data]['0']['msj'], error: '-02' }, status: 400 and return
+          end
+        else
+          render json: { message: 'Recargue saldo para continuar', error: '-01' }, status: 400 and return
+        end
+      end
+    rescue Exception => e
+      render json: { message: 'Ocurrio un error, intente de nuevo mas tarde', error: e.message }, status: 400 and return
     end
-    
   end
 
   private
@@ -75,31 +90,72 @@ class Api::V1::SalesController < ApplicationController
   end
 
   def player_has_balance
-    puts @balance[:data]
-    @balance[:data]["saldo_actual"].to_f > params[:monto_total].to_f
+    balance_player[:data]['monto'].to_f > total_amount
   end
 
   def balance_player
-    @balance ||= IntegratorServices.new.get_balance(current_player)
+    @balance_player ||= IntegratorServices.new(current_player).request_balance
   end
-  [{"c"=>"110", "j"=>[{"i"=>1, "n"=>"01", "m"=>"50000"}]}]
+
+  def send_transaction(current_ticket)
+    @transaction_cashier = IntegratorServices.new(current_player, current_ticket, TRANSACTION_TYPE[:debito]).make_transaction
+  end
+
   def sales_params
-    params.permit(
-      :monto_total,
-      :ced,
-      :nom,
-      :fec,
-      :compress,
-      :app,
-      :ani,
-      :tip,
-      :cod,
-      :ani_tipo,
-      :producto_id,
-      :beneficiencia,
-      :cda,
-      :cajero_id,
-      jug: [:c,j:[:i,:n,:m]]
-    )
+    params[:plays].map { |p| p.permit(:number, :lotery_id, :amount)}
+  end
+
+  def total_amount
+    @total_amount ||= sales_params.reduce(0) { |memo, data| memo + data[:amount].to_f }
+  end
+
+  def plays_validates
+    @plays_validates ||= BackofficeServices.new(current_player: current_player, plays: sales_params).validate_plays
+  end
+
+  def add_plays
+    data = {
+      cant_bets: sales_params.length,
+      total_ammount: total_amount,
+      security: Time.now.strftime('%Y%m%d%H%M%S'),
+      bets: JSON.parse(sales_params.to_json)
+    }
+    @add_plays ||= BackofficeServices.new(current_player: current_player, plays: data).add_plays
+  end
+
+  def valid_add_plays?
+    add_plays[:data]['message'].downcase == 'ok'
+  end
+
+  def valid_plays?
+    plays_validates[:data]['0']['msj'].downcase == 'ok'
+  end
+
+  def sorteos
+    redis = Redis.new
+    unless redis.get('sorteos').present?
+      @sorteos ||= BackofficeServices.new.request_sorteos[:data]['0']
+      redis.set('sorteos', @sorteos.to_json)
+      redis.expireat('sorteos',Time.now.end_of_day.to_i)
+    else
+      sorteos = redis.get('sorteos')
+      @sorteos ||= JSON.parse(sorteos)
+    end
+  end
+
+  def agroup_bets(bets)
+    played_draws = bets.pluck('lotery_id').uniq
+    texto = ""
+
+    played_draws.each { |lotery_id|
+      texto += "#{sorteo_name(lotery_id)}:" + 10.chr
+      texto += bets.select { |bet| bet['lotery_id'] == lotery_id}.pluck('number').join('- ')
+      texto += 10.chr
+    }
+    texto
+  end
+
+  def sorteo_name(sorteo_id)
+    sorteos.select { |sorteo| sorteo['id'] == sorteo_id}[0]['name']
   end
 end

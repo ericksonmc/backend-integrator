@@ -1,0 +1,24 @@
+# == Schema Information
+#
+# Table name: awards
+#
+#  id            :bigint           not null, primary key
+#  number        :string
+#  draw_id       :integer
+#  info_re_award :jsonb
+#  status        :integer
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#
+
+one:
+  number: MyString
+  draw_id: 1
+  info_re_award: 
+  status: 1
+
+two:
+  number: MyString
+  draw_id: 1
+  info_re_award: 
+  status: 1

@@ -1,9 +1,13 @@
 module ApplicationHelper
+  include AuthorizedHelper
+  include SorteosHelper
+  require 'redis'
+  
   def base_url
     if Rails.env == "development"
-      "http://localhost:4016"
+      "http://localhost:3000"
     elsif Rails.env == "production"
-      "http://138.197.97.45:4016"
+      "http://iframe.caribeapuesta.com/"
     end
   end
 

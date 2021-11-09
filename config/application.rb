@@ -27,10 +27,11 @@ module Backend
     config.active_record.default_timezone = :local
     config.active_record.time_zone_aware_attributes = false
     
-    config.middleware.insert_before 0, Rack::Cors do
+    config.public_file_server.enabled = ENV['RAILS_SERVE_STATIC_FILES'].present?
+      config.middleware.insert_before 0, Rack::Cors do
       allow do
         origins '*'
-        resource '*', :headers => :any, :methods => [:get, :post, :options,:put, :delete]
+        resource '*', :headers => :any, :methods => [:get, :post, :options, :put, :delete]
       end
     end
 

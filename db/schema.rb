@@ -10,14 +10,55 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 ActiveRecord::Schema.define(version: 2021_03_03_140922) do
 =======
 ActiveRecord::Schema.define(version: 2021_11_09_153146) do
 >>>>>>> Stashed changes
+=======
+ActiveRecord::Schema.define(version: 2021_08_23_182918) do
+>>>>>>> main
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "award_details", force: :cascade do |t|
+    t.integer "ticket_id"
+    t.float "amount"
+    t.integer "status", default: 0, null: false
+    t.bigint "award_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.boolean "reaward", default: false
+    t.integer "bet_id"
+    t.index ["award_id"], name: "index_award_details_on_award_id"
+  end
+
+  create_table "awards", force: :cascade do |t|
+    t.string "number"
+    t.integer "draw_id"
+    t.jsonb "info_re_award"
+    t.integer "status", default: 0, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "bets", force: :cascade do |t|
+    t.bigint "ticket_id", null: false
+    t.float "amount"
+    t.float "prize"
+    t.boolean "played"
+    t.integer "bet_statu_id"
+    t.integer "lotery_id"
+    t.string "number"
+    t.bigint "player_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "remote_bet_id"
+    t.index ["player_id"], name: "index_bets_on_player_id"
+    t.index ["ticket_id"], name: "index_bets_on_ticket_id"
+  end
 
   create_table "integrators", force: :cascade do |t|
     t.string "name"
@@ -53,7 +94,10 @@ ActiveRecord::Schema.define(version: 2021_11_09_153146) do
     t.string "username"
     t.string "password"
     t.string "token"
+<<<<<<< HEAD
     t.string "currency"
+=======
+>>>>>>> main
   end
 
   create_table "products", force: :cascade do |t|
@@ -96,4 +140,7 @@ ActiveRecord::Schema.define(version: 2021_11_09_153146) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  add_foreign_key "bets", "players"
+  add_foreign_key "bets", "tickets"
+  add_foreign_key "tickets", "players"
 end

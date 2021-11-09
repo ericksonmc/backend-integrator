@@ -1,37 +1,76 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rails db:seed command (or created alongside the database with db:setup).
-#
-# Examples:
-#
-#   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
-#   Character.create(name: 'Luke', movie: movies.first)
+User.create!([
+  {username: "ericksonmc", password_digest: "$2a$12$gFGr4F2iCuTn5K2jRT0UUul2/K03rrnfuHUKAzDVCn1IgUa2Smkg.", email: "erick2109@gmail.com", role: 1}
+])
+LotterySetup.create!([
+  {mmt: 10000.0, mpj: 10000.0, jpt: 500.0, mt: 1000.0}
+])
 
-integrator = Integrator.create(
-  name: 'Integrator Centro de Apuestas',
-  phone: '+584141234567',
-  address: 'Maracaibo',
-  email: 'admin@centrodeapuestas.com',
-  apikey: Random.hex(18), 
-  status: true,
-  setting_apis: {
-    balance: {
-      url: 'https://www.centrodeapuestas.com/external/api/v1/sales/player_balance?player_id=',
-      mehtod: 'GET'
-    },
-    casher_transaction: {
-      url: 'https://www.centrodeapuestas.com/external/api/v1/sales/player_operacion',
-      method: 'POST',
-      params: ['amount','type_transaction','description','reference','player_id','credit_type']
-    }
+caribeapuestassettings = {
+  "balance": {
+    "url": "https://ca02-vm03.sagcit.com/GCIT.Api/api/CaribeApuestas/saldo?player_id=",
+    "mehtod": "GET"
   },
-  product_settings: nil
-)
+  "casher_transaction": {
+    "url": "https://ca02-vm03.sagcit.com/GCIT.Api/api/CaribeApuestas/transaccion",
+    "method": "POST",
+    "params": [
+      "amount",
+      "type_transaction",
+      "description",
+      "reference",
+      "player_id",
+      "credit_type"
+    ]
+  }
+}
+Integrator.create!([
+  {name: "Integrator Centro de Apuestas", phone: "+584141234567", address: "Maracaibo", email: "admin@centrodeapuestas.com", apikey: "a50f74ffe424c2f652e10e42112602ee5546", status: true, product_settings: nil, setting_apis: {"balance"=>{"url"=>"https://www.centrodeapuestas.com/external/api/v1/sales/player_balance?player_id=", "mehtod"=>"GET"}, "casher_transaction"=>{"url"=>"https://www.centrodeapuestas.com/external/api/v1/sales/player_operacion", "method"=>"POST", "params"=>["amount", "type_transaction", "description", "reference", "player_id", "credit_type"]}}},
+  {name: "Caribe Apuestas", phone: "+5804126453792", address: "Margarita", email: "admin@caribeapuestas.com", apikey: "e641acd1cf5a122bdefbc4969fbac6000904ac978496f3f254bc42a2e12b9b8d", status: true, product_settings: nil, setting_apis: caribeapuestassettings }
+])
 
-user = User.create(
-  username: 'ericksonmc',
-  password: 'Erick2109',
-  email: 'erick2109@gmail.com',
-  role: 1
-)
-
-setup = LotterySetup.create(mmt: 10000, mpj:10000, jpt: 500, mt: 1000)
+Product.create([
+  {
+    name: "Triple Caracas",
+    rules: "http://www.triplecaracas.com/assets/REGLAMENTOWEB.pdf",
+    type_product: 1,
+    url: 'http://www.triplecaracas.com/'
+  },{
+    name: "Triple Caliente",
+    rules: "http://triplecaliente.com.ve/images/ReglamentodeJuegoTripleCaliente.pdf",
+    type_product: 1,
+    url: 'http://triplecaliente.com.ve'
+  },{
+    name: "Triple Zulia",
+    rules: "http://resultadostriplezulia.com/images/ReglamentodeJuegoTripleZulia_23-10-2015.pdf",
+    type_product: 1,
+    url: 'http://resultadostriplezulia.com'
+  },{
+    name: "Zamorano",
+    rules: "http://triplezamorano.com/images/Reglamento_TripleZamorano_23-10-2015.pdf",
+    type_product: 1,
+    url: 'http://triplezamorano.com/'
+  },{
+    name: "Jungla Millonaria",
+    rules: "http://junglamillonaria.com/images/Reglamento_Jungla_Millonaria.pdf",
+    type_product: 0,
+    url: 'http://junglamillonaria.com/'
+  },{
+    name: "La Granjita",
+    rules: "https://iframe.centrodeapuestas.com/rules-la-granjita.pdf",
+    type_product: 0,
+    url: 'https://lagranjitaonline.com/'
+  },{
+    name: 'La granjita internacional',
+    rules: '',
+    type_product: 0,
+    url: 'https://www.instagram.com/lagranjitainternacional'
+  },{
+    name: 'Ruleta activa',
+    rules: '',
+    type_product: 0,
+  },{
+    name: 'La Ricachona',
+    rules: '',
+    type_product: 1,
+    url: 'https://www.instagram.com/laricachonavzla/'
+  }])
