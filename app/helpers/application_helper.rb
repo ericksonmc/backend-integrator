@@ -7,7 +7,7 @@ module ApplicationHelper
     if Rails.env == "development"
       "http://localhost:3000"
     elsif Rails.env == "production"
-      "http://iframe.caribeapuesta.com/"
+      "https://iframe.caribeapuesta.com/"
     end
   end
 
