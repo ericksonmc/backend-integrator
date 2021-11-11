@@ -21,7 +21,7 @@ class AuthServices
 
     @options.merge!({ body: USERS["#{@key}_USER".to_sym].to_json })
     # byebug
-    response = HTTParty.post("#{BASE_URL}/users/token/userwebtest", @options)
+    response = HTTParty.post("#{BASE_URL}/users/token/#{USERS["#{@key}_USER".to_sym][:username]}", @options)
     data = get_response(response)[:data]
 
     set_auth_token(@key, data['token'])
@@ -42,5 +42,4 @@ class AuthServices
       status: request.code
     }
   end
-
 end
