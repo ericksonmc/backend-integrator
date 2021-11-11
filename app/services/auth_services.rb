@@ -3,8 +3,8 @@ class AuthServices
   require 'httparty'
   BASE_URL = 'http://api-dev.caribeapuesta.com'.freeze
   USERS = {
-    VES_USER: { username: 'userwebtest', password: '0000' },
-    USD_USER: { username: 'TESTLUIS', password: '123456' }
+    VES_USER: { username: 'TESTPRODBS', password: '123456' },
+    USD_USER: { username: 'TESTPROD', password: '123456' }
   }.freeze
 
   def initialize(key: 'VES_token')
