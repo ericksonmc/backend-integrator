@@ -7,7 +7,7 @@ class AuthServices
     USD_USER: { username: 'TESTPROD', password: '123456' }
   }.freeze
 
-  def initialize(key: 'VES_token')
+  def initialize(key: 'VES')
     @key = key
     @options = {
       headers: {
