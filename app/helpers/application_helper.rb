@@ -4,11 +4,7 @@ module ApplicationHelper
   require 'redis'
 
   def base_url
-    if Rails.env == "development"
-      "http://localhost:3000"
-    elsif Rails.env == "production"
-      "https://iframe.caribeapuesta.com/"
-    end
+    ENV['iframe_url']
   end
 
   def auth_token(key)

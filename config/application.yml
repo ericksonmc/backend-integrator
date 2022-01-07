@@ -1,0 +1,16 @@
+# Add configuration values here, as shown below.
+
+development:
+  backoffice_url: http://api-preprod.caribeapuesta.com
+  iframe_url: http://localhost:3000
+  VES_USER: 'userwebtest'
+  VES_PSSW: '0000'
+  USD_USER: 'TESTPROD'
+  USD_PSSW: '123456'
+production:
+  backoffice_url: http://api.caribeapuesta.com
+  iframe_url: https://iframe.caribeapuesta.com
+  VES_USER: 'TESTPRODBS'
+  VES_PSSW: '123456'
+  USD_USER: 'TESTPROD'
+  USD_PSSW: '123456'
