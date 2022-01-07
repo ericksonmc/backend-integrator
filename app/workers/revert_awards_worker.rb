@@ -1,6 +1,6 @@
 class RevertAwardsWorker
   include Sidekiq::Worker
-  TYPE_TRANSACTION = {withdrawal: 0, payment: 1}
+  TYPE_TRANSACTION = { withdrawal: 0, payment: 1 }.freeze
 
   # reward: {"id"=>55, "ticket_id"=>881415, "amount"=>600000.0, "status"=>"award", "award_id"=>38, "reaward"=>false}
   def perform(reward)

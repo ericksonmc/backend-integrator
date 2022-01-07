@@ -7,6 +7,7 @@ class Api::V1::AwardsController < ApplicationController
     @awards_total = []
     @rewarded_awards = []
     @bets_awards = []
+    @date = params[:date].to_time || Time.now # YYYY-MM-DD
     begin
       ActiveRecord::Base.transaction do
         awards.each do |draw_award|
@@ -26,8 +27,8 @@ class Api::V1::AwardsController < ApplicationController
               amount: detail['premio'],
               award_id: @award.id,
               reaward: exist,
-              created_at: Time.now,
-              updated_at: Time.now
+              created_at: @date,
+              updated_at: @date
             }
           end
 
@@ -51,7 +52,7 @@ class Api::V1::AwardsController < ApplicationController
   private
 
   def exist_award?(draw_id)
-    @award = Award.where(created_at: Time.now.all_day, draw_id: draw_id).last
+    @award = Award.where(created_at: @date.all_day, draw_id: draw_id).last
   end
 
   def check_awards_params
