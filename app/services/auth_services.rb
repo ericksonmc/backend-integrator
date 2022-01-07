@@ -1,10 +1,10 @@
 class AuthServices
   include ApplicationHelper
   require 'httparty'
-  BASE_URL = 'http://api-preprod.caribeapuesta.com'.freeze
+  BASE_URL = ENV['backoffice_url']
   USERS = {
-    VES_USER: { username: 'TESTPRODBS', password: '123456' },
-    USD_USER: { username: 'TESTPROD', password: '123456' }
+    VES_USER: { username: ENV['VES_USER'], password: ENV['VES_PSSW'] },
+    USD_USER: { username: ENV['USD_USER'], password: ENV['USD_PSSW'] }
   }.freeze
 
   def initialize(key: 'VES')
@@ -20,7 +20,6 @@ class AuthServices
     return if auth_token(@key).present?
 
     @options.merge!({ body: USERS["#{@key}_USER".to_sym].to_json })
-    # byebug
     response = HTTParty.post("#{BASE_URL}/users/token/#{USERS["#{@key}_USER".to_sym][:username]}", @options)
     data = get_response(response)[:data]
 
