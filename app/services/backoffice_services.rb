@@ -2,7 +2,7 @@ class BackofficeServices
   include ApplicationHelper
   require 'redis'
   require 'httparty'
-  BASE_URL = 'http://api.caribeapuesta.com'.freeze
+  BASE_URL = 'http://api-preprod.caribeapuesta.com'.freeze
 
   def initialize(current_player: {}, plays: {}, date_from: Time.now, date_to: Time.now)
     @date_from = date_from
@@ -58,7 +58,7 @@ class BackofficeServices
 
   def get_response(request)
     raise 'Authentication required' if request.code == 401
-
+    Rails.logger.info JSON.parse(request.body) if request.code != 200
     {
       data: JSON.parse(request.body),
       headers: request.headers,

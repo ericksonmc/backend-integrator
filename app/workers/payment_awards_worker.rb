@@ -5,6 +5,7 @@ class PaymentAwardsWorker
   # ticket_pay: {ticket_id: 27, premio: 600000.0}
 
   def perform(ticket_pay)
+    Rails.logger.info "Perform Paymen Award: #{ticket_pay}"
     @ticket_pay = ticket_pay
     @ticket = ticket(@ticket_pay['ticket_id'])
 
@@ -21,7 +22,7 @@ class PaymentAwardsWorker
     }
 
     transaction(params, TYPE_TRANSACTION[:payment])
-
+    Rails.logger.info "#{@transaction[:status]} ==== #{@transaction[:data]}"
     if @transaction[:status] == 200
       @ticket.update(prize: @ticket_pay['premio'], payed: true, date_pay: Time.now.to_i)
     else

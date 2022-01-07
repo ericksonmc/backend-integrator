@@ -1,7 +1,7 @@
 class AuthServices
   include ApplicationHelper
   require 'httparty'
-  BASE_URL = 'http://api-dev.caribeapuesta.com'.freeze
+  BASE_URL = 'http://api-preprod.caribeapuesta.com'.freeze
   USERS = {
     VES_USER: { username: 'TESTPRODBS', password: '123456' },
     USD_USER: { username: 'TESTPROD', password: '123456' }

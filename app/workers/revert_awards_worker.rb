@@ -4,6 +4,7 @@ class RevertAwardsWorker
 
   # reward: {"id"=>55, "ticket_id"=>881415, "amount"=>600000.0, "status"=>"award", "award_id"=>38, "reaward"=>false}
   def perform(reward)
+	Rails.logger.info "Perform Revert Award #{reward}"
     @reward = AwardDetail.find(reward['id'])
     @ticket = ticket(@reward.ticket_id)
 
@@ -23,7 +24,7 @@ class RevertAwardsWorker
         player_id: @player.player_id
       }
       transaction(params, TYPE_TRANSACTION[:payment])
-
+	Rails.logger.info "#{@transaction[:status]} <=========> #{@transaction[:data]}"
       if @transaction[:status] == 200
         new_status_reward('revert')
       else
