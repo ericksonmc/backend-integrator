@@ -18,7 +18,7 @@ class BackofficeServices
 
     get_response(response)
   rescue StandardError
-    AuthServices.new(key: @current_player.currency).renew_token_auth
+    AuthServices.new(key: @current_player.currency, integrator: @current_player.integrator_id).renew_token_auth
   end
 
   def validate_plays
@@ -27,7 +27,7 @@ class BackofficeServices
 
     get_response(response)
   rescue StandardError
-    AuthServices.new(key: @current_player.currency).renew_token_auth
+    AuthServices.new(key: @current_player.currency, integrator: @current_player.integrator_id).renew_token_auth
   end
 
   def add_plays
@@ -35,7 +35,7 @@ class BackofficeServices
     response = HTTParty.post("#{BASE_URL}/tickets/add", @options)
     get_response(response)
   rescue StandardError
-    AuthServices.new(key: @current_player.currency).renew_token_auth
+    AuthServices.new(key: @current_player.currency, integrator: @current_player.integrator_id).renew_token_auth
   end
 
   def lotery_results
@@ -44,7 +44,7 @@ class BackofficeServices
     response = HTTParty.get(url,@options)
     get_response(response)
   rescue StandardError
-    AuthServices.new(key: @current_player.currency).renew_token_auth
+    AuthServices.new(key: @current_player.currency, integrator: @current_player.integrator_id).renew_token_auth
   end
 
   def anulll_ticket
@@ -53,7 +53,7 @@ class BackofficeServices
 
     get_response(response)
   rescue StandardError
-    AuthServices.new(key: @current_player.currency).renew_token_auth
+    AuthServices.new(key: @current_player.currency, integrator: @current_player.integrator_id).renew_token_auth
   end
 
   def get_response(request)

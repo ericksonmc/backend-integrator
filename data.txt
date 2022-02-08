@@ -1,0 +1,41 @@
+{"balance"=>{"url"=>"https://allws.sagcit.com/ApiLoteria/api/CaribeApuestas/saldo?player_id=", "mehtod"=>"GET"}, "casher_transaction"=>{"url"=>"https://allws.sagcit.com/ApiLoteria/api/CaribeApuestas/transaccion", "method"=>"POST", "params"=>["amount", "type_transaction", "description", "reference", "player_id", "credit_type"]}}
+
+
+Hacer post al siguiente endpoint
+URL: api/v1/auth
+METHOD: POST
+PARAMS:
+    email:string
+    username:string
+    player_id:integer <ID del player en la pagina>
+    company: string <Nombre de la pagina>
+    integrator_id: Proporcionado por el administrador
+    currency: VES <VES | USD> <bolivares o dolares son las unicas mmonedas que se usan>
+
+Habilitar 2 endpoint para el consumo de saldo y las transacciones
+Opciones Sugerida:
+
+Balance:
+METHOD: GET
+URL: /saldo
+RESPONSE:
+{
+    "monto": 20308.48
+}
+
+transacciones
+METHOD: POST
+URL: /transaccion
+PARAMS:
+{
+    "amount": 11165920,
+    "type_transaccion": 1,
+    "description": "prueba",
+    "reference": 1,
+    "player_id": 40033
+}
+
+amount: <monto de la transaccion>
+type_transaccion: 0 Debito (Descuento de saldo) : 1 Credito (saldo a pagar por premio)
+description: <transaccion del ticket>
+reference: integer <id del ticket en el iframe tanto para pago de premio o para descuento>

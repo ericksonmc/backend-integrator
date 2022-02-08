@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_09_153146) do
+ActiveRecord::Schema.define(version: 2022_02_06_013328) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -63,6 +63,7 @@ ActiveRecord::Schema.define(version: 2021_11_09_153146) do
     t.jsonb "setting_apis"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.jsonb "users", default: {}
   end
 
   create_table "lottery_setups", force: :cascade do |t|
@@ -118,15 +119,6 @@ ActiveRecord::Schema.define(version: 2021_11_09_153146) do
     t.datetime "updated_at", precision: 6, null: false
     t.string "ticket_string"
     t.index ["player_id"], name: "index_tickets_on_player_id"
-  end
-
-  create_table "users", force: :cascade do |t|
-    t.string "username"
-    t.string "password_digest"
-    t.string "email"
-    t.integer "role"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
   end
 
   add_foreign_key "bets", "players"

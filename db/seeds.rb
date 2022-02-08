@@ -23,54 +23,34 @@ caribeapuestassettings = {
     ]
   }
 }
-Integrator.create!([
-  {name: "Integrator Centro de Apuestas", phone: "+584141234567", address: "Maracaibo", email: "admin@centrodeapuestas.com", apikey: "a50f74ffe424c2f652e10e42112602ee5546", status: true, product_settings: nil, setting_apis: {"balance"=>{"url"=>"https://www.centrodeapuestas.com/external/api/v1/sales/player_balance?player_id=", "mehtod"=>"GET"}, "casher_transaction"=>{"url"=>"https://www.centrodeapuestas.com/external/api/v1/sales/player_operacion", "method"=>"POST", "params"=>["amount", "type_transaction", "description", "reference", "player_id", "credit_type"]}}},
-  {name: "Caribe Apuestas", phone: "+5804126453792", address: "Margarita", email: "admin@caribeapuestas.com", apikey: "e641acd1cf5a122bdefbc4969fbac6000904ac978496f3f254bc42a2e12b9b8d", status: true, product_settings: nil, setting_apis: caribeapuestassettings }
-])
+sella_tu_parley = {
+  "balance": {
+    "url": "https://bor.sellatuparley.com/api_caribeapuesta/balance?player_id=",
+    "mehtod": "GET"
+  },
+  "casher_transaction": {
+    "url": "https://bor.sellatuparley.com/api_caribeapuesta/transaction",
+    "method": "POST",
+    "params": [
+      "amount",
+      "type_transaction",
+      "description",
+      "reference",
+      "player_id",
+      "credit_type"
+    ]
+  }
+}
+usersIntegrator2 = {
+  VES: { username: 'SELLATUPARLEYBS', password: '123456' },
+  USD: { username: 'SELLATUPARLEYDOLAR', password: '123456' }
+}
 
-Product.create([
-  {
-    name: "Triple Caracas",
-    rules: "http://www.triplecaracas.com/assets/REGLAMENTOWEB.pdf",
-    type_product: 1,
-    url: 'http://www.triplecaracas.com/'
-  },{
-    name: "Triple Caliente",
-    rules: "http://triplecaliente.com.ve/images/ReglamentodeJuegoTripleCaliente.pdf",
-    type_product: 1,
-    url: 'http://triplecaliente.com.ve'
-  },{
-    name: "Triple Zulia",
-    rules: "http://resultadostriplezulia.com/images/ReglamentodeJuegoTripleZulia_23-10-2015.pdf",
-    type_product: 1,
-    url: 'http://resultadostriplezulia.com'
-  },{
-    name: "Zamorano",
-    rules: "http://triplezamorano.com/images/Reglamento_TripleZamorano_23-10-2015.pdf",
-    type_product: 1,
-    url: 'http://triplezamorano.com/'
-  },{
-    name: "Jungla Millonaria",
-    rules: "http://junglamillonaria.com/images/Reglamento_Jungla_Millonaria.pdf",
-    type_product: 0,
-    url: 'http://junglamillonaria.com/'
-  },{
-    name: "La Granjita",
-    rules: "https://iframe.centrodeapuestas.com/rules-la-granjita.pdf",
-    type_product: 0,
-    url: 'https://lagranjitaonline.com/'
-  },{
-    name: 'La granjita internacional',
-    rules: '',
-    type_product: 0,
-    url: 'https://www.instagram.com/lagranjitainternacional'
-  },{
-    name: 'Ruleta activa',
-    rules: '',
-    type_product: 0,
-  },{
-    name: 'La Ricachona',
-    rules: '',
-    type_product: 1,
-    url: 'https://www.instagram.com/laricachonavzla/'
-  }])
+usersIntegrator1 = {
+  VES: { username: 'userwebtest', password: '0000' },
+  USD: { username: 'TESTPROD', password: '123456' }
+}
+Integrator.create!([
+  {name: "Caribe Apuestas", phone: "+5804126453792", address: "Margarita", email: "admin@caribeapuestas.com", apikey: "e641acd1cf5a122bdefbc4969fbac6000904ac978496f3f254bc42a2e12b9b8d", status: true, product_settings: nil, setting_apis: caribeapuestassettings, users: usersIntegrator2 }
+  {name: "Sella tu parley", phone: "+5804120000000", address: "Caracas", email: "admin@sellatuparley.com", apikey: "b85210f9357b93f55fb73911ceb67254eba2279797d1ebde154e90da6c8d2985", status: true, product_settings: nil, setting_apis: sella_tu_parley, users: usersIntegrator2 }
+])

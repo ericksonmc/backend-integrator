@@ -5,6 +5,9 @@ class Api::V1::AuthController < ApplicationController
   def create
     render json: { message: 'Integrador no encontrado o esta inactivo' }, status: 400 and return unless valid_integrator
 
+    render json: { message: 'Error al crear el jugador' }, status: 400 and return unless player.present?
+    
+    set_token
     render json: { token: token, url: "#{base_url}/login/#{token}" }, status: 200 and return if player.present?
 
     render json: { message: 'Error al obtener la informacion del jugador' }, status: 400 and return
@@ -36,16 +39,13 @@ class Api::V1::AuthController < ApplicationController
   end
 
   def player
-    @player = Player.find_by(email: params[:email], integrator_id: params[:integrator_id])
-    @player = Player.create(player_params) unless @player.present?
-    set_token
-    @player
+    @player ||= Player.find_by(player_id: params[:player_id], email: params[:email], integrator_id: params[:integrator_id]) || Player.create(player_params)
   end
 
   def set_token
-    return if auth_token("#{@player.currency}").present?
+    return if auth_token("integrator_#{@player.integrator_id}_#{@player.currency}").present?
 
-    auth_service = AuthServices.new(key: "#{@player.currency}").do_login_web_page
+    auth_service = AuthServices.new(key: @player.currency, integrator: @player.integrator_id).do_login_web_page
     render json: { message: 'Hubo un problema obtener al generar el token' }, status: 400 and return unless auth_service
   end
 
@@ -62,7 +62,7 @@ class Api::V1::AuthController < ApplicationController
   end
 
   def integrator
-    @integrator = Integrator.find_by(id: player.integrator_id)
+    @integrator ||= Integrator.find_by(id: params[:integrator_id])
   end
 
   def player_params
