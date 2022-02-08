@@ -36,10 +36,10 @@ class PaymentAwardsWorker
   end
 
   def ticket(id)
-    @ticket = Ticket.find(id)
+    Ticket.find(id)
   end
 
   def player(player_id)
-    @player = Player.find(player_id)
+    Player.find(player_id)
   end
 end

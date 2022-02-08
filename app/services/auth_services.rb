@@ -7,8 +7,9 @@ class AuthServices
     USD_USER: { username: ENV['USD_USER'], password: ENV['USD_PSSW'] }
   }.freeze
 
-  def initialize(key: 'VES')
+  def initialize(key: 'VES', integrator: nil)
     @key = key
+    @integrator = Integrator.find(integrator)
     @options = {
       headers: {
         'Content-Type' => 'application/json'
@@ -17,13 +18,13 @@ class AuthServices
   end
 
   def do_login_web_page
-    return if auth_token(@key).present?
-
-    @options.merge!({ body: USERS["#{@key}_USER".to_sym].to_json })
-    response = HTTParty.post("#{BASE_URL}/users/token/#{USERS["#{@key}_USER".to_sym][:username]}", @options)
+    return if auth_token("integrator_#{@integrator.id}_#{@key}").present?
+    # @options.merge!({ body: USERS["#{@key}_USER".to_sym].to_json })
+    @options.merge!({ body: @integrator.users[@key].to_json })
+    response = HTTParty.post("#{BASE_URL}/users/token/#{@integrator.users[@key]['username']}", @options)
     data = get_response(response)[:data]
 
-    set_auth_token(@key, data['token'])
+    set_auth_token("integrator_#{@integrator.id}_#{@key}", data['token'])
     return true
   end
 
