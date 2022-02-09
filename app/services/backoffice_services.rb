@@ -73,7 +73,7 @@ class BackofficeServices
       headers: {
         'Content-Type' => 'application/json',
         'Type' => 'web',
-        'Authorization' => "Bearer #{auth_token(@current_player.currency)}"
+        'Authorization' => "Bearer #{auth_token("integrator_#{@current_player.integrator_id}_#{@current_player.currency}")}"
       }
     }
   end
