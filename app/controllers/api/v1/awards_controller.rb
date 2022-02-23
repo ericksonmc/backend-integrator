@@ -40,8 +40,14 @@ class Api::V1::AwardsController < ApplicationController
         updated_amount_awards(@bets_awards)
       end
     rescue Exception => e
+      Rails.logger.info '*********************************'
+      Rails.logger.info "Error: #{e.message}"
+      Rails.logger.info '*********************************'
       render json: { message: e.message, status: 'fail' }, status: 400 and return
     end
+    Rails.logger.info '*********************************'
+    Rails.logger.info "Success: Premiado => #{@awards_total.length} Repremiado => #{@rewarded_awards.length}"
+    Rails.logger.info '*********************************'
 
     render json: { message: 'Premios Recibidos',
                    total_awards: @awards_total.length,
