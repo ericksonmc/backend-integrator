@@ -32,7 +32,7 @@ class Api::V1::AwardsController < ApplicationController
             }
           end
 
-          AwardDetail.insert_all(award_details)
+          AwardDetail.insert_all(award_details) if award_details.present?
           @bets_awards.concat award_details
 
           @awards_total << @award
