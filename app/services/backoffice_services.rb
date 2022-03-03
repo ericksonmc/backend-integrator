@@ -47,7 +47,7 @@ class BackofficeServices
     AuthServices.new(key: @current_player.currency, integrator: @current_player.integrator_id).renew_token_auth
   end
 
-  def anulll_ticket
+  def anull_ticket
     @options.merge!({ body: @plays.to_json })
     response = HTTParty.post("#{BASE_URL}/tickets/anull", @options)
 

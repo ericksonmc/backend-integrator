@@ -21,15 +21,18 @@ class Api::V1::AwardsController < ApplicationController
           end
 
           award_details = draw_award['apuestas']&.map do |detail|
-            {
-              ticket_id: Bet.find_by(remote_bet_id: detail['id_apuesta']).ticket_id,
-              bet_id: detail['id_apuesta'],
-              amount: detail['premio'],
-              award_id: @award.id,
-              reaward: exist,
-              created_at: @date,
-              updated_at: @date
-            }
+            single_play = Bet.find_by(remote_bet_id: detail['id_apuesta'])
+            if single_play.present?
+              {
+                ticket_id: single_play.ticket_id,
+                bet_id: detail['id_apuesta'],
+                amount: detail['premio'],
+                award_id: @award.id,
+                reaward: exist,
+                created_at: @date,
+                updated_at: @date
+              }
+            end
           end
 
           AwardDetail.insert_all(award_details) if award_details.present?

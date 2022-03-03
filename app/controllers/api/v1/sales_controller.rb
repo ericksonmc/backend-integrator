@@ -4,11 +4,11 @@ class Api::V1::SalesController < ApplicationController
   def create
     begin
       ActiveRecord::Base.transaction do
-        if player_has_balance
+        # if player_has_balance
           if valid_plays?
             if valid_add_plays?
               if ticket
-                render json: { message: 'Jugada realizada con exito', ticket_string: @ticket.ticket_string, saldo_actual: @transaction_cashier[:data]['balance'] }
+                render json: { message: 'Jugada realizada con exito', ticket_string: @ticket.ticket_string, saldo_actual: @cashier[:data]['balance'] }
               else
                 render json: { message: 'Ocurrio un error al guardar la jugada', error: '-04' }, status: 400 and return
               end
@@ -18,12 +18,12 @@ class Api::V1::SalesController < ApplicationController
           else #si las jugadas no tienen limite
             render json: { data: plays_validates[:data]['0'], message: plays_validates[:data]['0']['msj'], error: '-02' }, status: 400 and return
           end
-        else
-          render json: { message: 'Recargue saldo para continuar', error: '-01' }, status: 400 and return
-        end
+        # else
+        #   render json: { message: 'Recargue saldo para continuar', error: '-01' }, status: 400 and return
+        # end
       end
     rescue Exception => e
-      render json: { message: 'Ocurrio un error, intente de nuevo mas tarde', error: e.message }, status: 400 and return
+      render json: { message: e.message, error: e.message }, status: 400 and return
     end
   end
 
@@ -75,8 +75,8 @@ class Api::V1::SalesController < ApplicationController
 
   def generate_ticket_string
     texto = ''
-    texto += 'CARIBEAPUESTAS' + 10.chr
-    texto += 'RIF: J-409540634' + 10.chr
+    texto += current_player.integrator.legal_name + 10.chr
+    texto += current_player.integrator.dni.present? ? "#{current_player.integrator.dni} #{10.chr}" : "RIF: J-409540634 #{10.chr}" 
     texto += "Ticket: ##{add_plays[:data]['0']['number']}" + 10.chr
     texto += "Serial/S: #{add_plays[:data]['0']['confirm']}" + 10.chr
     texto += "Fecha/Hora: #{Time.new.strftime('%d/%m/%Y %H:%M')}" + 10.chr
@@ -98,7 +98,14 @@ class Api::V1::SalesController < ApplicationController
   end
 
   def send_transaction(current_ticket)
-    @transaction_cashier = IntegratorServices.new(current_player, current_ticket, TRANSACTION_TYPE[:debito]).make_transaction
+    @cashier = IntegratorServices.new(current_player, current_ticket, TRANSACTION_TYPE[:debito]).make_transaction
+
+  rescue Exception => e
+    message = JSON.parse(e.message)
+    params_anull = { number: current_ticket.number, confirm: current_ticket.confirm }
+    rever_ticket = BackofficeServices.new(current_player: current_player, plays: params_anull).anull_ticket
+
+    raise Exception.new message['message']
   end
 
   def sales_params

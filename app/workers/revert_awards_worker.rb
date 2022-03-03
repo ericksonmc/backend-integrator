@@ -13,36 +13,32 @@ class RevertAwardsWorker
     @player = player(@ticket.player_id)
 
     @balance = request_balance
-
-    if @balance.to_f > @reward.amount.to_f
-      
-      params = {
-        amount: @reward.amount.to_f,
-        type_transaccion: TYPE_TRANSACTION[:withdrawal],
-        description: "Reverso de premio equivocado #{@ticket.number}",
-        reference: @ticket.number,
-        player_id: @player.player_id
-      }
-      transaction(params, TYPE_TRANSACTION[:payment])
-	Rails.logger.info "#{@transaction[:status]} <=========> #{@transaction[:data]}"
-      if @transaction[:status] == 200
-        new_status_reward('revert')
-      else
-        new_status_reward('unrevert')
-      end
-    else
-      new_status_reward('unrevert')
-    end
+  
+    params = {
+      amount: @reward.amount.to_f,
+      type_transaccion: TYPE_TRANSACTION[:withdrawal],
+      description: "Reverso de premio equivocado #{@ticket.number}",
+      reference: @ticket.number,
+      player_id: @player.player_id
+    }
+    transaction = transaction(params, TYPE_TRANSACTION[:payment])
+    new_status_reward('revert')
+  rescue Exception => e
+    new_status_reward('unrevert', message)
+    return true
   end
 
   private
 
-  def new_status_reward(status)
-    @reward.update(status: status)
+  def new_status_reward(status, response = nil)
+    @reward.update(status: status, response: response)
   end
 
   def transaction(transaction, transaction_type)
-    @transaction = IntegratorServices.new(@player, transaction, transaction_type).pay_award
+    transaction = IntegratorServices.new(@player, transaction, transaction_type).pay_award
+  rescue Exception => e
+    body = JSON.parse(e)
+    raise Exception.new body
   end
 
   def ticket(ticket_id)

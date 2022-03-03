@@ -17,5 +17,5 @@
 #  currency      :string
 #
 class Player < ApplicationRecord
-  
+  belongs_to :integrator
 end
