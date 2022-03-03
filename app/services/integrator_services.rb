@@ -17,7 +17,7 @@ class IntegratorServices
   def request_balance
     url = "#{@integrator.setting_apis['balance']['url']}#{@player.player_id}"
     response = HTTParty.get(url, @options)
-    parsed_data = get_response(response)
+    get_response(response)
   end
 
   def make_transaction
@@ -30,13 +30,13 @@ class IntegratorServices
     }
     @options.merge!({ body: params.to_json })
     response = HTTParty.post(@integrator.setting_apis['casher_transaction']['url'], @options)
-    parsed_data = get_response(response)
+    get_response(response)
   end
 
   def pay_award
     @options.merge!({ body: @transaction.to_json })
     response = HTTParty.post(@integrator.setting_apis['casher_transaction']['url'], @options)
-    parsed_data = get_response(response)
+    get_response(response)
   end
 
   private
