@@ -4,7 +4,7 @@ class Api::V1::AwardsController < ApplicationController
   LOGGER = LOGGER.new('log/award.log', 'daily')
 
   def create
-    LOGGER params['_json']
+    LOGGER.info params['_json']
     awards = params['_json'].as_json
     @awards_total = []
     @rewarded_awards = []
@@ -94,10 +94,9 @@ class Api::V1::AwardsController < ApplicationController
     end
     LOGGER.info "TICKETS_TO_PAY =======> #{tickets_to_pay}"
     tickets_to_pay.delete_if { |award| award[:premio].to_f.zero? }
-    LOGGER.info "TICKETS_TO_PAY =======> #{tickets_to_pay}"
+    LOGGER.info "TICKETS_TO_PAY AFTER DELETE AWARD IN 0.0 =======> #{tickets_to_pay}"
 
     tickets_to_pay.each{ |tickets_pay|
-      LOGGER.info "**************************************************************************"
       LOGGER.info "**************************************************************************"
       LOGGER.info "Send Worker PaymentAward ====>  #{tickets_pay}"
       PaymentAwardsWorker.perform_async(tickets_pay)
