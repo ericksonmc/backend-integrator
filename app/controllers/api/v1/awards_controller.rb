@@ -1,8 +1,10 @@
 class Api::V1::AwardsController < ApplicationController
   skip_before_action :authorized
   before_action :check_awards_params, only: [:create]
+  LOGGER = LOGGER.new('log/award.log', 'daily')
 
   def create
+    LOGGER params['_json']
     awards = params['_json'].as_json
     @awards_total = []
     @rewarded_awards = []
@@ -43,14 +45,14 @@ class Api::V1::AwardsController < ApplicationController
         updated_amount_awards(@bets_awards)
       end
     rescue Exception => e
-      Rails.logger.info '*********************************'
-      Rails.logger.info "Error: #{e.message}"
-      Rails.logger.info '*********************************'
+      LOGGER.info '*********************************'
+      LOGGER.info "Error: #{e.message}"
+      LOGGER.info '*********************************'
       render json: { message: e.message, status: 'fail' }, status: 400 and return
     end
-    Rails.logger.info '*********************************'
-    Rails.logger.info "Success: Premiado => #{@awards_total.length} Repremiado => #{@rewarded_awards.length}"
-    Rails.logger.info '*********************************'
+    LOGGER.info '*********************************'
+    LOGGER.info "Success: Premiado => #{@awards_total.length} Repremiado => #{@rewarded_awards.length}"
+    LOGGER.info '*********************************'
 
     render json: { message: 'Premios Recibidos',
                    total_awards: @awards_total.length,
@@ -84,19 +86,20 @@ class Api::V1::AwardsController < ApplicationController
       @rewarded_awards.each do |reward|
         awards_to_rever = Award.find(reward).award_details.where(status: 'pending_revert')
         awards_to_rever.each do |award_detail_to_revert|
-	        Rails.logger.info "*********************************************************"
-          Rails.logger.info "Send Worker Reward ====>>>  #{award_detail_to_revert}" 
+	        LOGGER.info "*********************************************************"
+          LOGGER.info "Send Worker Reward ====>>>  #{award_detail_to_revert}" 
 	        RevertAwardsWorker.perform_async(award_detail_to_revert.attributes)
         end
       end
     end
-
+    LOGGER.info "TICKETS_TO_PAY =======> #{tickets_to_pay}"
     tickets_to_pay.delete_if { |award| award[:premio].to_f.zero? }
+    LOGGER.info "TICKETS_TO_PAY =======> #{tickets_to_pay}"
 
     tickets_to_pay.each{ |tickets_pay|
-      Rails.logger.info "**************************************************************************"
-      Rails.logger.info "**************************************************************************"
-      Rails.logger.info "Send Worker PaymentAward ====>  #{tickets_pay}"
+      LOGGER.info "**************************************************************************"
+      LOGGER.info "**************************************************************************"
+      LOGGER.info "Send Worker PaymentAward ====>  #{tickets_pay}"
       PaymentAwardsWorker.perform_async(tickets_pay)
     }
   end
