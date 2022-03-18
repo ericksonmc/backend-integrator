@@ -84,12 +84,14 @@ class Api::V1::AwardsController < ApplicationController
       @rewarded_awards.each do |reward|
         awards_to_rever = Award.find(reward).award_details.where(status: 'pending_revert')
         awards_to_rever.each do |award_detail_to_revert|
-	  Rails.logger.info "*********************************************************"
+	        Rails.logger.info "*********************************************************"
           Rails.logger.info "Send Worker Reward ====>>>  #{award_detail_to_revert}" 
-	  RevertAwardsWorker.perform_async(award_detail_to_revert.attributes)
+	        RevertAwardsWorker.perform_async(award_detail_to_revert.attributes)
         end
       end
     end
+
+    tickets_to_pay.delete_if { |award| award[:premio].to_f.zero? }
 
     tickets_to_pay.each{ |tickets_pay|
       Rails.logger.info "**************************************************************************"
