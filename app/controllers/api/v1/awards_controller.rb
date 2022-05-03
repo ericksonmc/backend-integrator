@@ -1,7 +1,7 @@
 class Api::V1::AwardsController < ApplicationController
   skip_before_action :authorized
   before_action :check_awards_params, only: [:create]
-  LOGGER = LOGGER.new('log/award.log', 'daily')
+  LOGGER = Logger.new('log/award.log', 'daily')
 
   def create
     LOGGER.info params['_json']
@@ -9,11 +9,12 @@ class Api::V1::AwardsController < ApplicationController
     @awards_total = []
     @rewarded_awards = []
     @bets_awards = []
-    @date = params[:date].to_time || Time.now # YYYY-MM-DD
+    @date = params[:date].present? ? params[:date].to_time : Time.now # YYYY-MM-DD
     begin
       ActiveRecord::Base.transaction do
         awards.each do |draw_award|
           exist = exist_award?(draw_award['sorteo']).present?
+          LOGGER.info "Repremiacion" if exist
           if exist
             @award.update(info_re_award: draw_award['apuestas'], number: draw_award['numero'], status: 'updated')
             @award.award_details.update_all(status: 'pending_revert')
@@ -21,24 +22,25 @@ class Api::V1::AwardsController < ApplicationController
           else
             @award = Award.create({ number: draw_award['numero'], draw_id: draw_award['sorteo'] })
           end
-
-          award_details = draw_award['apuestas']&.map do |detail|
-            single_play = Bet.find_by(remote_bet_id: detail['id_apuesta'])
-            if single_play.present?
-              {
-                ticket_id: single_play.ticket_id,
-                bet_id: detail['id_apuesta'],
-                amount: detail['premio'],
-                award_id: @award.id,
-                reaward: exist,
-                created_at: @date,
-                updated_at: @date
-              }
+          if draw_award['apuestas'].present? 
+            award_details = draw_award['apuestas'].map do |detail|
+              single_play = Bet.find_by(remote_bet_id: detail['id_apuesta'])
+              if single_play.present?
+                {
+                  ticket_id: single_play.ticket_id,
+                  bet_id: detail['id_apuesta'],
+                  amount: detail['premio'],
+                  award_id: @award.id,
+                  reaward: exist,
+                  created_at: @date,
+                  updated_at: @date
+                }
+              end
             end
-          end
+          end 
 
           AwardDetail.insert_all(award_details) if award_details.present?
-          @bets_awards.concat award_details
+          @bets_awards.concat award_details  if award_details.present?
 
           @awards_total << @award
         end
@@ -48,7 +50,7 @@ class Api::V1::AwardsController < ApplicationController
       LOGGER.info '*********************************'
       LOGGER.info "Error: #{e.message}"
       LOGGER.info '*********************************'
-      render json: { message: e.message, status: 'fail' }, status: 400 and return
+      render json: { message: e.message, status: 'fail', error: e.backtrace }, status: 400 and return
     end
     LOGGER.info '*********************************'
     LOGGER.info "Success: Premiado => #{@awards_total.length} Repremiado => #{@rewarded_awards.length}"
