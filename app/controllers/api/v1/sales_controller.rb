@@ -16,7 +16,11 @@ class Api::V1::SalesController < ApplicationController
               render json: { message: 'Ocurrio un error al registrar la jugada', error: '-03'}, status: 400 and return
             end
           else #si las jugadas no tienen limite
-            render json: { data: plays_validates[:data]['0'], message: plays_validates[:data]['0']['msj'], error: '-02' }, status: 400 and return
+            render json: { message: 'No hay jugadas disponibles' }, status: 400 and return if plays_validates[:data]['0']['aceptados'].blank?
+
+            render json: { message: 'Algunas jugadas no se encuentran disponibles' }, status: 400 and return if plays_validates[:data]['0']['rechazados'].present?
+
+            render json: { data: plays_validates[:data]['0'], message: 'No hay ninguna jugada disponible', error: '-02' }, status: 400 and return
           end
         # else
         #   render json: { message: 'Recargue saldo para continuar', error: '-01' }, status: 400 and return
@@ -75,7 +79,7 @@ class Api::V1::SalesController < ApplicationController
 
   def generate_ticket_string
     texto = ''
-    texto += current_player.integrator.legal_name + 10.chr
+    texto += current_player.integrator.legal_name.to_s + 10.chr
     texto += current_player.integrator.dni.present? ? "#{current_player.integrator.dni} #{10.chr}" : "RIF: J-409540634 #{10.chr}" 
     texto += "Ticket: ##{add_plays[:data]['0']['number']}" + 10.chr
     texto += "Serial/S: #{add_plays[:data]['0']['confirm']}" + 10.chr
@@ -135,7 +139,7 @@ class Api::V1::SalesController < ApplicationController
   end
 
   def valid_plays?
-    plays_validates[:data]['0']['msj'].downcase == 'ok'
+    plays_validates[:data]['0']['msj'].downcase == 'ok' and plays_validates[:data]['0']['aceptados'].present?
   end
 
   def sorteos
@@ -156,7 +160,7 @@ class Api::V1::SalesController < ApplicationController
 
     played_draws.each { |lotery_id|
       texto += "#{sorteo_name(lotery_id)}:" + 10.chr
-      texto += bets.select { |bet| bet['lotery_id'] == lotery_id}.pluck('number').join('- ')
+      texto += bets.select { |bet| bet['lotery_id'] == lotery_id }.group_by { |bet| bet['amount']}.map {|k,v| "#{k}: #{v.pluck('number').map{|n| get_animalitos(sorteos, lotery_id, n)}.join(', ')}"}.join(" #{10.chr} ")
       texto += 10.chr
     }
     texto
