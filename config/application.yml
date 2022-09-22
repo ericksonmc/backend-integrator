@@ -2,13 +2,13 @@
 
 development:
   backoffice_url: http://api-preprod.caribeapuesta.com
-  iframe_url: http://localhost:3000
+  iframe_url: http://localhost:4000
   VES_USER: 'userwebtest'
   VES_PSSW: '0000'
   USD_USER: 'TESTPROD'
   USD_PSSW: '123456'
 production:
-  iframe_url: http://143.198.65.44:3000
+  iframe_url: http://143.198.65.44:4000
   backoffice_url: http://api-preprod.caribeapuesta.com
   VES_USER: 'TESTPRODBS'
   VES_PSSW: '123456'
