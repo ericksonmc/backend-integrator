@@ -8,7 +8,7 @@ development:
   USD_USER: 'TESTPROD'
   USD_PSSW: '123456'
 production:
-  iframe_url: https://beta-iframe.caribeapuesta.com
+  iframe_url: http://143.198.65.44:3000
   backoffice_url: http://api-preprod.caribeapuesta.com
   VES_USER: 'TESTPRODBS'
   VES_PSSW: '123456'
