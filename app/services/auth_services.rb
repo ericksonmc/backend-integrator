@@ -20,9 +20,10 @@ class AuthServices
   def do_login_web_page
     return if auth_token("integrator_#{@integrator.id}_#{@key}").present?
     # @options.merge!({ body: USERS["#{@key}_USER".to_sym].to_json })
-    @options.merge!({ body: @integrator.users[@key].to_json })
-    response = HTTParty.post("#{BASE_URL}/users/token/#{@integrator.users[@key]['username']}", @options)
-    data = get_response(response)[:data]
+    # @options.merge!({ body: @integrator.users[@key].to_json })
+    # response = HTTParty.post("#{BASE_URL}/users/token/#{@integrator.users[@key]['username']}", @options)
+    # data = get_response(response)[:data]
+    data = { 'token' => SecureRandom.hex(10) }
 
     set_auth_token("integrator_#{@integrator.id}_#{@key}", data['token'])
     return true

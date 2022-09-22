@@ -3,6 +3,7 @@ class Api::V1::AuthController < ApplicationController
   before_action :authorized, only: [:auto_login]
 
   def create
+    byebug
     render json: { message: 'Integrador no encontrado o esta inactivo' }, status: 400 and return unless valid_integrator
 
     render json: { message: 'Error al crear el jugador' }, status: 400 and return unless player.present?
@@ -14,13 +15,13 @@ class Api::V1::AuthController < ApplicationController
   end
 
   def auto_login
-    balance = IntegratorServices.new(current_player).request_balance
-
+    # balance = IntegratorServices.new(current_player).request_balance
+    byebug
     render json: {
       player: current_player,
-      producst: sorteos,
+      producst: sorteos['0'],
       lottery_setup: lottery_setup,
-      saldo_actual: balance[:data]['monto']
+      saldo_actual: 500
     }
   end
 
@@ -51,11 +52,13 @@ class Api::V1::AuthController < ApplicationController
 
   def sorteos
     redis = Redis.new
+
     if redis.get('sorteos').present?
       sorteos = redis.get('sorteos')
       @sorteos ||= JSON.parse(sorteos)
     else
-      @sorteos ||= BackofficeServices.new(current_player: @player).request_sorteos[:data]['0']
+      # @sorteos ||= BackofficeServices.new(current_player: @player).request_sorteos[:data]['0']
+      @sorteos ||= fake_sorteos
       redis.set('sorteos', @sorteos.to_json)
       redis.expireat('sorteos', Time.now.end_of_day.to_i)
     end
